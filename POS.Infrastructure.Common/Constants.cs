@@ -34,6 +34,6 @@ namespace EvaSign.Common
     public class AnonymousRouteData
     {
         public const string contoller = "users";
-        public const string action = "login";//Edit
+        public const string action = "login";
     }
 }
