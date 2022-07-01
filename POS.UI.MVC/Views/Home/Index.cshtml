@@ -1,0 +1,20 @@
+﻿@using POS.Domain.ViewModels;
+@{
+    ViewBag.Title = "Home Page";
+}
+@section scriptslanding
+{
+    <script>
+        var loadTime = Date.now();
+
+     
+        $(function () {
+            var relativeURI = '@ViewBag.actionURL';
+            var menu = '@ViewBag.menu';
+         
+            appFilter.routeLandingPage(menu, relativeURI);
+
+            admin.loadTimeLog(loadTime, 'HomePage dom ready');
+        });
+    </script>
+}

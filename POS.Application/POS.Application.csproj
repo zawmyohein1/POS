@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\POS.Domain\POS.Domain.csproj" />
+    <ProjectReference Include="..\POS.Infrastructure.Data\POS.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\POS.Infrastructure.Exceptions\POS.Infrastructure.Exceptions.csproj" />
+    <ProjectReference Include="..\POS.Infrastructure.Mapper\POS.Infrastructure.Mapper.csproj" />
+  </ItemGroup>
+
+</Project>

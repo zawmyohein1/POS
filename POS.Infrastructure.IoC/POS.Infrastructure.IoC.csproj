@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+ <TargetFramework>netcoreapp3.1</TargetFramework>
+   <ApplicationIcon />
+   <OutputType>Library</OutputType>
+   <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\POS.Application\POS.Application.csproj" />
+    <ProjectReference Include="..\POS.Domain\POS.Domain.csproj" />
+    <ProjectReference Include="..\POS.Infrastructure.Common\POS.Infrastructure.Common.csproj" />
+    <ProjectReference Include="..\POS.Infrastructure.Data\POS.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\POS.Infrastructure.Logger\POS.Infrastructure.Logger.csproj" />
+  </ItemGroup>
+
+</Project>
