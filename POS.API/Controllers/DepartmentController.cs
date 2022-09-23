@@ -21,9 +21,9 @@ namespace POS.API.Controllers
     {
         private readonly IDepartmentservice _departmentService;
 
-        public DepartmentsController(IDepartmentservice Departmentservice)
+        public DepartmentsController(IDepartmentservice departmentService)
         {
-            _departmentService = Departmentservice;
+            _departmentService = departmentService;
         }
 
         [Authorize]
@@ -33,10 +33,10 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var Departmentmodellist = await _departmentService.GetAllDepartments();
+                var departmentModelList = await _departmentService.GetAllDepartments();
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return Ok(Departmentmodellist);
+                return Ok(departmentModelList);
             }
             catch (Exception ex)
             {
@@ -57,10 +57,10 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var userModel = await _departmentService.GetDepartmentById(id);
+                var departmentModel = await _departmentService.GetDepartmentById(id);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return Ok(userModel);
+                return Ok(departmentModel);
 
             }
             catch (Exception ex)
@@ -82,10 +82,10 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var userModel = await _departmentService.CreateDepartment(model);
+                var departmentModel = await _departmentService.CreateDepartment(model);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return CreatedAtAction(nameof(Get), new { id = userModel.Department_ID }, userModel);
+                return CreatedAtAction(nameof(Get), new { id = departmentModel.Department_ID }, departmentModel);
 
             }
             catch (EntityNotFoundException ex)

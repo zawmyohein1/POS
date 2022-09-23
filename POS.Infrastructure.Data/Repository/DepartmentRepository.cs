@@ -12,12 +12,10 @@ namespace POS.Infrastructure.Data.Repository
     public class DepartmentReposity : IDepartmentRepository
     {
         protected readonly DbContextOptions _option;
-
         public DepartmentReposity(DbContextOptions option)
         {
             _option = option;
         }
-
         public async Task<List<Department>> GetAllDepartmentsAsync()
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -37,7 +35,6 @@ namespace POS.Infrastructure.Data.Repository
                 }
             }
         }
-
         public async Task<Department> CreateDepartmentAsync(Department entity)
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -59,7 +56,6 @@ namespace POS.Infrastructure.Data.Repository
                 return await Task.FromResult<Department>(entity);
             }
         }
-
         public async Task<Department> GetDepartmentByIdAsync(int departmentId)
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -79,7 +75,6 @@ namespace POS.Infrastructure.Data.Repository
                 }
             }
         }
-
         public async Task<Department> UpdateDepartmentAsync(Department entity)
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -102,7 +97,6 @@ namespace POS.Infrastructure.Data.Repository
             }
             return await Task.FromResult<Department>(entity);
         }
-
         public async Task<Department> DeleteDepartmentAsync(Department entity)
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -124,8 +118,7 @@ namespace POS.Infrastructure.Data.Repository
                 }
             }
             return await Task.FromResult<Department>(entity);
-        }   
-
+        }
         public async Task<Department> CheckDuplicate(Department department)
         {
             using (var _dbContext = new POSDbContext(_option))

@@ -9,15 +9,13 @@ using System.Threading.Tasks;
 
 namespace POS.Infrastructure.Data.Repository
 {
-    public class UserReposity : IUserRepository
+    public class UserRepository : IUserRepository
     {
         protected readonly DbContextOptions _option;
-
-        public UserReposity(DbContextOptions option)
+        public UserRepository(DbContextOptions option)
         {
             _option = option;
         }
-
         public async Task<List<User>> GetAllUsersAsync()
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -37,7 +35,6 @@ namespace POS.Infrastructure.Data.Repository
                 }
             }
         }
-
         public async Task<User> CreateUserAsync(User entity)
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -59,7 +56,6 @@ namespace POS.Infrastructure.Data.Repository
                 return await Task.FromResult<User>(entity);
             }
         }
-
         public async Task<User> GetUserByIdAsync(int userId)
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -79,7 +75,6 @@ namespace POS.Infrastructure.Data.Repository
                 }
             }
         }
-
         public async Task<User> UpdateUserAsync(User entity)
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -102,7 +97,6 @@ namespace POS.Infrastructure.Data.Repository
             }
             return await Task.FromResult<User>(entity);
         }
-
         public async Task<User> DeleteUserAsync(User entity)
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -125,7 +119,6 @@ namespace POS.Infrastructure.Data.Repository
             }
             return await Task.FromResult<User>(entity);
         }
-
         public async Task<User> LoginUserAsync(string email, string password)
         {
             using (var _dbContext = new POSDbContext(_option))
@@ -145,7 +138,6 @@ namespace POS.Infrastructure.Data.Repository
                 }
             }
         }
-
         public async Task<User> CheckDuplicate(User user)
         {
             using (var _dbContext = new POSDbContext(_option))

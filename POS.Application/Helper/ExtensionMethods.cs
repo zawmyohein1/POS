@@ -12,7 +12,6 @@ namespace WebApi.POS.Application.Helper
 
             return users.Select(x => x.WithoutPassword());
         }
-
         public static UserModel WithoutPassword(this UserModel user) 
         {
             if (user == null) return null;

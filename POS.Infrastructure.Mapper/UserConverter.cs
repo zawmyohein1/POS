@@ -22,7 +22,7 @@ namespace POS.Infrastructure.Mapper
             entity.Phone = model.Phone;
             entity.Role = model.Role;
             entity.Gender = model.Gender;
-            entity.Created = (model.Created == null) ? DateTime.Now : model.Created;
+            entity.Created = (model.Created == null || model.Created == default) ? DateTime.Now : model.Created;
             entity.IsDeleted = model.IsDeleted;
             return;
         }

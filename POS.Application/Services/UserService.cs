@@ -74,8 +74,12 @@ namespace POS.Application.Services
                 if (duplicateEntity == null)
                 {
                     entity = await _repository.CreateUserAsync(entity);
+                   
+                    //insert recrod to audit trail table after insert user record
                     AuditTrail.InsertAuditTrail(AuditAction.Add, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                    
                     model.User_ID = entity.User_ID;
+
                     model.ResultCode = (int)CustomExceptionEnum.Success;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                 }
@@ -141,10 +145,15 @@ namespace POS.Application.Services
                     var duplicateEntity = await _repository.CheckDuplicate(entity);
                     if (duplicateEntity == null)
                     {
+                        //insert record to audit trail table before user edit record
                         AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                        
                         UserConverter.ConvertModelToEntity(model, ref entity);
                         await _repository.UpdateUserAsync(entity);
+
+                        //insert record to audit trail table after user edit record
                         AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                       
                         model.ResultCode = (int)CustomExceptionEnum.Success;
                         model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                     }
@@ -184,7 +193,9 @@ namespace POS.Application.Services
                 {
                     entity.IsDeleted = true;
                     await _repository.DeleteUserAsync(entity);
+                   
                     AuditTrail.InsertAuditTrail(AuditAction.Delete, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                   
                     model.ResultCode = (int)CustomExceptionEnum.Success;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                 }
@@ -217,17 +228,11 @@ namespace POS.Application.Services
                 {
                     model.ResultCode = (int)CustomExceptionEnum.Success;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
-
                     // authentication successful so generate jwt token
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
                     var tokenDescriptor = new SecurityTokenDescriptor
-                    {
-                        //Subject = new ClaimsIdentity(new Claim[]
-                        //{
-                        //    new Claim(ClaimTypes.Name,model.Id.ToString()),
-                        //    new Claim(ClaimTypes.Role,"Admin") //change later with configurable setting
-                        //}),
+                    { 
                         Subject = new ClaimsIdentity(new[] { new Claim("id", model.User_ID.ToString()) }),
                         Expires = DateTime.UtcNow.AddDays(7), //update later with configurable setting
                         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -253,6 +258,7 @@ namespace POS.Application.Services
                 model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
                 _logger.LogError(ex);
             }
+
             return model.WithoutPassword();
         }
     }

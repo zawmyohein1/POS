@@ -5,7 +5,7 @@
 
             @Html.AntiForgeryToken()
             <div class="modal-content ">
-                <input type="hidden" id="Id" name="Id" asp-for="@Model.User_ID" />
+                <input type="hidden" id="Id" name="User_ID" asp-for="@Model.User_ID" />
                 <div class="modal-header bg-primary">
                     <h4 class="modal-title">Update User</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -15,8 +15,8 @@
 
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="txtName">Name</label>
-                        <input type="text" class="form-control" name="Name" placeholder="Name" id="txtName" value="@Model.User_Name">
+                        <label for="txtUserName">Name</label>
+                        <input type="text" class="form-control" name="User_Name" placeholder="Name" id="txtUserName" value="@Model.User_Name">
                     </div>
                     <div class="form-group">
                         <label for="txtEmail">Email</label>

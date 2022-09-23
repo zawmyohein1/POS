@@ -12,13 +12,13 @@ namespace POS.UI.MVC.Controllers
 {
     public class UsersController : BaseController
     {
-        private const string relativeURI = "Users";      
+        private const string relativeURI = "Users";
 
         [HttpGet]
         public async Task<ActionResult> IndexAsync()
         {
             DateTime t1 = DateTime.Now;
-            UserModelList Usermodellist = new UserModelList();
+            UserModelList userModelList = new UserModelList();
             token = HttpContext.Session.GetString("Token");
 
             HttpResponseMessage response = await _webApiClient.GetAsync(relativeURI, token);
@@ -27,15 +27,14 @@ namespace POS.UI.MVC.Controllers
             if (VerifyResponse(response, out responseMessage))
             {
                 var requestResult = await response.Content.ReadAsStringAsync();
-                Usermodellist = (UserModelList)JsonConvert.DeserializeObject<UserModelList>(requestResult);
+                userModelList = (UserModelList)JsonConvert.DeserializeObject<UserModelList>(requestResult);
 
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return View("Index", Usermodellist);
+                return View("Index", userModelList);
             }
             else
             {
-                //return new HttpStatusCodeResult(response.StatusCode, responseMessage);
                 return this.StatusCode((int)response.StatusCode, responseMessage);
             }
         }
@@ -51,12 +50,12 @@ namespace POS.UI.MVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<ActionResult> CreateUserAsync(UserModel UserModel)
+        public async Task<ActionResult> CreateUserAsync(UserModel userModel)
         {
-            if (ModelState.IsValid && UserModel != null)
+            if (ModelState.IsValid && userModel != null)
             {
-                DateTime t1 = DateTime.Now;              
-                var jsonData = JsonConvert.SerializeObject(UserModel, Formatting.Indented, new JsonSerializerSettings()
+                DateTime t1 = DateTime.Now;
+                var jsonData = JsonConvert.SerializeObject(userModel, Formatting.Indented, new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 });
@@ -66,10 +65,10 @@ namespace POS.UI.MVC.Controllers
                 if (VerifyResponse(response, out responseMessage))
                 {
                     var requestResult = await response.Content.ReadAsStringAsync();
-                    UserModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
+                    userModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                    return await Task.FromResult<ActionResult>(Json(UserModel));
+                    return await Task.FromResult<ActionResult>(Json(userModel));
                 }
                 else
                 {
@@ -78,7 +77,7 @@ namespace POS.UI.MVC.Controllers
             }
             else
             {
-                return this.StatusCode(StatusCodes.Status400BadRequest,ErrorKeys.InvalidInput);
+                return this.StatusCode(StatusCodes.Status400BadRequest, ErrorKeys.InvalidInput);
             }
         }
 
@@ -88,18 +87,18 @@ namespace POS.UI.MVC.Controllers
             if (id > 0)
             {
                 DateTime t1 = DateTime.Now;
-                UserModel UserModel = new UserModel();
-             
+                UserModel userModel = new UserModel();
+
                 HttpResponseMessage response = await _webApiClient.GetAsync(relativeURI + "/" + id, token);
 
                 var responseMessage = string.Empty;
                 if (VerifyResponse(response, out responseMessage))
                 {
                     var requestResult = await response.Content.ReadAsStringAsync();
-                    UserModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
+                    userModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                    return PartialView("_Update", UserModel);
+                    return PartialView("_Update", userModel);
                 }
                 else
                 {
@@ -114,26 +113,26 @@ namespace POS.UI.MVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<ActionResult> UpdateUserAsync(UserModel UserModel)
+        public async Task<ActionResult> UpdateUserAsync(UserModel userModel)
         {
-            if (ModelState.IsValid && UserModel != null)
+            if (ModelState.IsValid && userModel != null)
             {
                 DateTime t1 = DateTime.Now;
-                var jsonData = JsonConvert.SerializeObject(UserModel, Formatting.Indented, new JsonSerializerSettings()
+                var jsonData = JsonConvert.SerializeObject(userModel, Formatting.Indented, new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
-                
+
                 HttpResponseMessage response = await _webApiClient.PutAsync(relativeURI, jsonData, token);
 
                 var responseMessage = string.Empty;
                 if (VerifyResponse(response, out responseMessage))
                 {
                     var requestResult = await response.Content.ReadAsStringAsync();
-                    UserModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
+                    userModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                    return await Task.FromResult<ActionResult>(Json(UserModel));
+                    return await Task.FromResult<ActionResult>(Json(userModel));
                 }
                 else
                 {
@@ -152,17 +151,17 @@ namespace POS.UI.MVC.Controllers
             if (id > 0)
             {
                 DateTime t1 = DateTime.Now;
-                UserModel UserModel = new UserModel();
+                UserModel userModel = new UserModel();
                 var _username = "Zaw";
                 var apiURI = relativeURI + "/" + id + "/" + _username;
-            
+
                 var response = await _webApiClient.DeleteAsync(apiURI, token);
                 var responseMessage = string.Empty;
 
                 if (VerifyResponse(response, out responseMessage))
                 {
                     var requestResult = response.Content.ReadAsStringAsync().Result;
-                    UserModel = (UserModel)JsonConvert.DeserializeObject<UserModel>(requestResult);
+                    userModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
                 }
                 else
                 {
@@ -170,7 +169,7 @@ namespace POS.UI.MVC.Controllers
                 }
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return await Task.FromResult<ActionResult>(Json(UserModel));
+                return await Task.FromResult<ActionResult>(Json(userModel));
             }
             else
             {

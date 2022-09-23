@@ -15,16 +15,16 @@ namespace POS.Infrastructure.IoC
         public static void RegisterServices(IServiceCollection services)
         {
             _service = services;
-            //POS.Core          
+
+            //POS.Core
             _service.AddScoped<IUserservice, Userservice>();
             _service.AddScoped<IDepartmentservice, Departmentservice>();
 
             //POS.Domain.Interfaces and repositories          
-            _service.AddScoped<IUserRepository, UserReposity>();
+            _service.AddScoped<IUserRepository, UserRepository>();
             _service.AddScoped<IDepartmentRepository, DepartmentReposity>();
 
-            //POS.Infrasture
-            //_service.AddScoped<ILoggerHelper, LoggerHelper>();
+            //POS.Infrasture           
             _service.AddSingleton<ILoggerHelper>(LoggerHelper.Instance);
             _service.AddScoped<IWebApiClient, WebApiClient>();
         }

@@ -19,11 +19,11 @@ namespace POS.API.Controllers
     [ApiController]
     public class UsersController : BaseController
     {
-        private readonly IUserservice _Userservice;
+        private readonly IUserservice _userService;
 
-        public UsersController(IUserservice Userservice)
+        public UsersController(IUserservice userService)
         {
-            _Userservice = Userservice;
+            _userService = userService;
         }
 
         [AllowAnonymous]
@@ -38,7 +38,7 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var userModel = await _Userservice.LoginUser(model);
+                var userModel = await _userService.LoginUser(model);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
                 return Ok(userModel);
@@ -68,10 +68,10 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var Usermodellist = await _Userservice.GetAllUsers();
+                var userModelList = await _userService.GetAllUsers();
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return Ok(Usermodellist);
+                return Ok(userModelList);
             }
             catch (Exception ex)
             {
@@ -92,7 +92,7 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var userModel = await _Userservice.GetUserById(id);
+                var userModel = await _userService.GetUserById(id);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
                 return Ok(userModel);
@@ -104,6 +104,7 @@ namespace POS.API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message.ToString());
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<ActionResult<UserModel>> Post(UserModel model)
@@ -116,7 +117,7 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var userModel = await _Userservice.CreateUser(model);
+                var userModel = await _userService.CreateUser(model);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
                 return CreatedAtAction(nameof(Get), new { id = userModel.User_ID }, userModel);
@@ -139,6 +140,7 @@ namespace POS.API.Controllers
             }
 
         }
+
         [Authorize]
         [HttpPut]
         public async Task<ActionResult<UserModel>> Put(UserModel model)
@@ -149,7 +151,7 @@ namespace POS.API.Controllers
             }
             try
             {
-                var userModel = await _Userservice.UpdateUser(model);
+                var userModel = await _userService.UpdateUser(model);
                 return CreatedAtAction(nameof(Get), new { id = userModel.User_ID }, userModel);
             }
             catch (EntityNotFoundException ex)
@@ -167,6 +169,7 @@ namespace POS.API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message.ToString());
             }
         }
+
         [Authorize]
         [HttpDelete("{id:int:min(1)}/{auditUserName}")]
         public async Task<ActionResult<UserModel>> Delete(int id, string auditUserName)
@@ -178,7 +181,7 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var userModel = await _Userservice.DeleteUser(id, auditUserName);
+                var userModel = await _userService.DeleteUser(id, auditUserName);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
                 return Ok(userModel);
