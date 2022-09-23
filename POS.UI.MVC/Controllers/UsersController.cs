@@ -51,7 +51,6 @@ namespace POS.UI.MVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-
         public async Task<ActionResult> CreateUserAsync(UserModel UserModel)
         {
             if (ModelState.IsValid && UserModel != null)
