@@ -17,9 +17,11 @@ namespace POS.Infrastructure.IoC
             _service = services;
             //POS.Core          
             _service.AddScoped<IUserservice, Userservice>();
+            _service.AddScoped<IDepartmentservice, Departmentservice>();
 
             //POS.Domain.Interfaces and repositories          
             _service.AddScoped<IUserRepository, UserReposity>();
+            _service.AddScoped<IDepartmentRepository, DepartmentReposity>();
 
             //POS.Infrasture
             //_service.AddScoped<ILoggerHelper, LoggerHelper>();
@@ -29,7 +31,7 @@ namespace POS.Infrastructure.IoC
 
         public static void UIRegisterServices(IServiceCollection services)
         {
-            _service = services;               
+            _service = services;
             _service.AddSingleton<ILoggerHelper>(LoggerHelper.Instance);
             _service.AddScoped<IWebApiClient, WebApiClient>();
         }

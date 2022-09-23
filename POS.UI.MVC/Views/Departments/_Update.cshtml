@@ -1,12 +1,13 @@
-﻿
+﻿@model POS.Domain.ViewModels.DepartmentModel
 <div class="modal fade" id="Custom-myModal">
     <div class="modal-dialog modal-lg">
-        <form role="form" class="form-horizontal" method="post" action="/Users/CreateUser" id="form_validation">
+        <form role="form" class="form-horizontal" method="post" action="/Departments/UpdateDepartment" id="form_validation">
 
             @Html.AntiForgeryToken()
             <div class="modal-content ">
+                <input type="hidden" id="Id" name="Id" asp-for="@Model.Department_ID" />
                 <div class="modal-header bg-primary">
-                    <h4 class="modal-title">Add User</h4>
+                    <h4 class="modal-title">Update Department</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -15,73 +16,54 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="txtName">Name</label>
-                        <input type="text" class="form-control" name="User_Name" placeholder="Name" id="txtName">
+                        <input type="text" class="form-control" name="Name" placeholder="Name" id="txtName" value="@Model.Department_ID">
                     </div>
                     <div class="form-group">
-                        <label for="txtEmail">Email</label>
-                        <input type="email" class="form-control" name="Email" placeholder="Email" id="txtEmail">
-                    </div>
-                    <div class="form-group">
-                        <label for="txtPassword">Password</label>
-                        <input type="password" class="form-control" name="Password" placeholder="Password" id="txtPassword">
-                    </div>
-                    <div class="form-group">
-                        <label for="txtPhone">Phone</label>
-                        <input type="text" class="form-control" name="Phone" placeholder="Phone" id="txtPhone">
-                    </div>
-                    <div class="form-group">
-                        <label for="txtRole">Role</label>
-                        <input type="text" class="form-control" name="Role" placeholder="Role" id="txtRole">
-                    </div>
+                        <label for="txtDescription">Email</label>
+                        <input type="text" class="form-control" name="Email" placeholder="Description" id="txtDescription" value="@Model.Description">
+                    </div>                  
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </div>
 
         </form>
     </div>
 </div>
-
 <script type="text/javascript">
+
+
 
     $(document).ready(function () {
 
         $.validator.setDefaults({
-            submitHandler: function (form) {       
+            submitHandler: function (form) {
                 $(form).ajaxSubmit({
-
                     beforeSubmit: function disableButton(data, form, opts) {
                     },
                     beforeSend: function (arr, form, options) { },
                     uploadProgress: function (event, position, total, percentComplete) { },
                     success: function (data) {
-                        successCreate(data);
+
+                        successUpdate(data);
                     },
                     error: function (xhr) {
-                        console.log(xhr);
+                        failUpdate();
                     },
                     complete: function (xhr) { }
                 });
             }
-        });       
+        });
 
         $('#form_validation').validate({
-            rules: {
-                Email: {
-                    required: true,
-                    email: true,
-                },
-                Password: {
-                    required: true,
-                    minlength: 5
-                },
+            rules: {              
                 Name: {
                     required: true
                 },
-                Phone: {
+                Description: {
                     required: true
                 },
 
@@ -124,18 +106,18 @@
         });
     });
 
-   var successCreate = (data) => {
+    var successUpdate = (data) => {
 
         if (data.resultCode == 0) {
             $('#Custom-myModal').modal('hide');
-            showDialog("", 'Saved Successfully!', "success", "Users", "Index", data.id, true, false, null, 0);
+            showDialog("", 'Updated Successfully!', "success", "Departments", "Index", data.id, true, false, null, 0);
         }
         else {
-             showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
+            showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
         }
     }
-    var failCreate = data => {
+    var failUpdate = data => {
 
-        showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
+        showDialog('SomethingWentWrong', 'Error', "error", "", "", 0, false, false, null, 0);
     }
 </script>

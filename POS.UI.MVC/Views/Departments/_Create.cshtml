@@ -1,12 +1,12 @@
 ﻿
 <div class="modal fade" id="Custom-myModal">
     <div class="modal-dialog modal-lg">
-        <form role="form" class="form-horizontal" method="post" action="/Users/CreateUser" id="form_validation">
+        <form role="form" class="form-horizontal" method="post" action="/Departments/CreateDepartment" id="form_validation">
 
             @Html.AntiForgeryToken()
             <div class="modal-content ">
                 <div class="modal-header bg-primary">
-                    <h4 class="modal-title">Add User</h4>
+                    <h4 class="modal-title">Add Department</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -15,23 +15,11 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="txtName">Name</label>
-                        <input type="text" class="form-control" name="User_Name" placeholder="Name" id="txtName">
+                        <input type="text" class="form-control" name="Name" placeholder="Name" id="txtName">
                     </div>
                     <div class="form-group">
-                        <label for="txtEmail">Email</label>
-                        <input type="email" class="form-control" name="Email" placeholder="Email" id="txtEmail">
-                    </div>
-                    <div class="form-group">
-                        <label for="txtPassword">Password</label>
-                        <input type="password" class="form-control" name="Password" placeholder="Password" id="txtPassword">
-                    </div>
-                    <div class="form-group">
-                        <label for="txtPhone">Phone</label>
-                        <input type="text" class="form-control" name="Phone" placeholder="Phone" id="txtPhone">
-                    </div>
-                    <div class="form-group">
-                        <label for="txtRole">Role</label>
-                        <input type="text" class="form-control" name="Role" placeholder="Role" id="txtRole">
+                        <label for="txtDescription">Description</label>
+                        <input type="text" class="form-control" name="Description" placeholder="Description" id="txtDescription">
                     </div>
                 </div>
 
@@ -69,46 +57,22 @@
         });       
 
         $('#form_validation').validate({
-            rules: {
-                Email: {
-                    required: true,
-                    email: true,
-                },
-                Password: {
-                    required: true,
-                    minlength: 5
-                },
+            rules: {              
                 Name: {
                     required: true
                 },
-                Phone: {
-                    required: true
-                },
-
-                Specialist: {
+                Description: {
                     required: true
                 },
             },
-            messages: {
-                Email: {
-                    required: "Please enter a email address",
-                    email: "Please enter a vaild email address"
-                },
-                Password: {
-                    required: "Please provide a password",
-                    minlength: "Your password must be at least 5 characters long"
-                },
+            messages: {               
                 Name: {
                     required: "Please enter a name",
 
                 },
                 Phone: {
-                    required: "Please enter a phone",
-                },
-                Specialist: {
-                    required: "Please enter a specialist",
-
-                },
+                    required: "Please enter a description",
+                },              
             },
             errorElement: 'span',
             errorPlacement: function (error, element) {
@@ -128,7 +92,7 @@
 
         if (data.resultCode == 0) {
             $('#Custom-myModal').modal('hide');
-            showDialog("", 'Saved Successfully!', "success", "Users", "Index", data.id, true, false, null, 0);
+            showDialog("", 'Saved Successfully!', "success", "Departments", "Index", data.id, true, false, null, 0);
         }
         else {
              showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);

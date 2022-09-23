@@ -1,4 +1,4 @@
-﻿using POS.Domain.Models;
+﻿using POS.Domain.EntityModels;
 using POS.Infrastructure.Data.Context;
 using POS.Infrastructure.Logger;
 using Microsoft.EntityFrameworkCore;

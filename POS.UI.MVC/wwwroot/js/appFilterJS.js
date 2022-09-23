@@ -32,7 +32,7 @@ var appFilter = {
                     dataTable_SearchValue = '';
                     temp_SearchValue = '';
                 }
-                appFilter.renderPartialViewMasterUI(relativeURI, controllerName, 0, false);
+                appFilter.renderPartialViewMasterUI(relativeURI, controllerName, 0, false, false);
             }
         });
     },
@@ -53,6 +53,7 @@ var appFilter = {
             /*  data: dataPass,*/
             traditional: true,
             success: function (data) {
+                console.log('renderPartialViewMasterUI' + data);
                 $("#PartialView").html("");
                 $("#PartialView").html(data);
 
@@ -108,11 +109,11 @@ var appFilter = {
         });
     },
 
-    routeLandingPage: function (landingPage, landingURL) {   
+    routeLandingPage: function (landingPage, landingURL) {
 
-        $('#ulLeftSideMenu P:contains("' + landingPage+'")').parent().addClass('active');
+        $('#ulLeftSideMenu P:contains("' + landingPage + '")').parent().addClass('active');
         //check for parent menu button     
-       
+
         var controllerName = landingURL.split('/')[1];
         var path = appFilter.getApplicaitonURL();
         var relativeURL = path + landingURL;

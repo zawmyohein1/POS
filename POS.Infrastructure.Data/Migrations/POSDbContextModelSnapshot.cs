@@ -49,14 +49,63 @@ namespace POS.Infrastructure.Data.Migrations
                     b.ToTable("Audit_Trails");
                 });
 
-            modelBuilder.Entity("POS.Domain.Models.User", b =>
+            modelBuilder.Entity("POS.Domain.Models.Department", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("Department_ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<DateTime?>("Created")
+                    b.Property<string>("Department_Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Department_ID");
+
+                    b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Occupation", b =>
+                {
+                    b.Property<int>("Occupation_ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("Department_ID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Occupation_Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Occupation_ID");
+
+                    b.HasIndex("Department_ID");
+
+                    b.ToTable("Occupations");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.User", b =>
+                {
+                    b.Property<int>("User_ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -70,11 +119,6 @@ namespace POS.Infrastructure.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -86,9 +130,30 @@ namespace POS.Infrastructure.Data.Migrations
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("User_Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("User_ID");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Occupation", b =>
+                {
+                    b.HasOne("POS.Domain.Models.Department", "Department")
+                        .WithMany("Occupations")
+                        .HasForeignKey("Department_ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("POS.Domain.Models.Department", b =>
+                {
+                    b.Navigation("Occupations");
                 });
 #pragma warning restore 612, 618
         }

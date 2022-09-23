@@ -1,4 +1,4 @@
-﻿using POS.Domain.Models;
+﻿using POS.Domain.EntityModels;
 using POS.Domain.ViewModels;
 using POS.Infrastructure.Exceptions;
 using System;
@@ -16,7 +16,7 @@ namespace POS.Infrastructure.Mapper
             if (string.IsNullOrEmpty(model.Password))
                 throw new CustomException(CustomExceptionEnum.InvalidPassword);
 
-            entity.Name = model.Name;
+            entity.User_Name = model.User_Name;
             entity.Email = model.Email;
             entity.Password = model.Password;
             entity.Phone = model.Phone;
@@ -32,8 +32,8 @@ namespace POS.Infrastructure.Mapper
             var model = new UserModel();
             if (entity != null)
             {
-                model.Id = entity.Id;
-                model.Name = entity.Name;
+                model.User_ID = entity.User_ID;
+                model.User_Name = entity.User_Name;
                 model.Email = entity.Email;
                 model.Password = entity.Password;
                 model.Phone = entity.Phone;

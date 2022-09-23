@@ -135,4 +135,13 @@
   <data name="InvalidPassword" xml:space="preserve">
     <value>InvalidPassword</value>
   </data>
+  <data name="DepartmentNameAlreadyExist" xml:space="preserve">
+    <value>DepartmentNameAlreadyExist</value>
+  </data>
+  <data name="InvalidDepartmentName" xml:space="preserve">
+    <value>Invalid Department Name</value>
+  </data>
+  <data name="NoDepartmentInfoAvailiable" xml:space="preserve">
+    <value>No Department Info Availiable</value>
+  </data>
 </root>

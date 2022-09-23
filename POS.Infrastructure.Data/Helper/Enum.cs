@@ -15,6 +15,6 @@ namespace POS.Infrastructure.Data.Helper
     public enum AuditModule
     {
         User = 1,
-        
+        Department = 2,
     }
 }

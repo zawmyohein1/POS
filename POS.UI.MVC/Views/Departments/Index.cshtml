@@ -1,14 +1,14 @@
-@model POS.Domain.ViewModels.UserModelList
+﻿@model POS.Domain.ViewModels.DepartmentModelList
 
-@{ ViewBag.Title = "Listing Users";
-                Layout = null; }
+@{ ViewBag.Title = "Listing Departments";
+    Layout = null; }
 
 <!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0 text-dark">Manage User</h1>
+                <h1 class="m-0 text-dark">Manage Department</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <button type="button" id="btnAddNew" class=" btn btn-block btn-primary  float-sm-right btnAddNew">Add</button>
@@ -24,30 +24,24 @@
                 <div class="card">
                     <div class="card-body">
                         <table class="table table-striped projects customTbl scrollWrapTbl listingTbl">
-                            @*<table class=" table table-bordered table-striped customTbl listingTbl">*@
                             <thead>
                                 <tr>
                                     <th>Id</th>
                                     <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Created</th>
-                                    <th>Role</th>
+                                    <th>Description</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model.userModelList)
+                                @foreach (var item in Model.departmentModelList)
                                 {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => item.User_ID)</td>
-                        <td>@Html.DisplayFor(modelItem => item.User_Name)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Email)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Phone)</td>
-                        <td>   @item.Created.ToString("dd/MM/yyyy")</td>
-                        <td>@Html.DisplayFor(modelItem => item.Role)</td>
-                        <td><a href="#" class="lnkEdit" data-para="@item.User_ID"><i class="fa fa-fw fa-edit"></i></a> | <a href="#" class="lnkDelete" data-para="@item.User_ID"><i class="fa fa-fw fa-trash"></i></a></td>
-                    </tr>}
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.Department_ID)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Department_Name)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Description)</td>                                       
+                                        <td><a href="#" class="lnkEdit" data-para="@item.Department_ID"><i class="fa fa-fw fa-edit"></i></a> | <a href="#" class="lnkDelete" data-para="@item.Department_ID"><i class="fa fa-fw fa-trash"></i></a></td>
+                                    </tr>
+                                }
                             </tbody>
 
                         </table>
@@ -77,8 +71,10 @@
 
     $(document).ready(function () {
 
+        console.log("hrere");
+
         $('#btnAddNew').click(function () {
-            var relativeURI='@Url.Action("Create","Users")';
+            var relativeURI='@Url.Action("Create","Departments")';
              renderPPPartialView(relativeURI);
         });
 
@@ -86,7 +82,7 @@
               var _id = $(this).attr('data-para');
                if (_id > 0) {
                     var relativeURI = "";
-                    var relativeURI = '@Url.Action("Update", "Users")?id=' + _id;
+                    var relativeURI = '@Url.Action("Update", "Departments")?id=' + _id;
                    renderPPPartialView(relativeURI);
                 }
         });
@@ -95,10 +91,9 @@
             var tdCount = $('tbody tr').length;
             if (tdCount > 1) {
                 var _id = $(this).attr('data-para');
-                deleteDialog("Users", "Delete", ["id"], [_id], "Users", 0, 'Index');
+                deleteDialog("Departments", "Delete", ["id"], [_id], "Departments", 0, 'Index');
             }
             else {
-                showDialog('Cannot delete this record!', "error", "", "", 0, false, false);
                  showDialog('Cannot Delete This Record', 'AtLeast One Record Must Be Remained', "error", "", "", 0, false, false);
             }
         });

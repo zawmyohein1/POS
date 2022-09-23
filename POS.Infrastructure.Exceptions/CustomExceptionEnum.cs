@@ -14,6 +14,12 @@ namespace POS.Infrastructure.Exceptions
         UserEmailAlreadyExists,
         InvalidEmail,
         InvalidPassword,
+        NoDepartmentInfoAvailiable,
+        InvalidDepartmentName,
+        DepartmentNameAlreadyExist,
+        InvalidOccupationName,
+        InvalidDepartmentID,
+        NoOccupationInfoAvailiable,
     }
     public enum EntityTypes
     {

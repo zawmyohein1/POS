@@ -4,15 +4,15 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace POS.Domain.Models
+namespace POS.Domain.EntityModels
 {
     public class User
     {
         [Key]
-        public int Id { get; set; }
-        [Required(ErrorMessage = "Name is requrired")]
+        public int User_ID { get; set; }
+        [Required(ErrorMessage = "User Name is requrired")]
         [StringLength(50)]
-        public string Name { get; set; }
+        public string User_Name { get; set; }
         [Required(ErrorMessage = "Email is required")]
         [StringLength(100)]
         public string Email { get; set; }

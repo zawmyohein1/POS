@@ -10,16 +10,16 @@ using EvaSign.Common;
 
 namespace POS.UI.MVC.Controllers
 {
-    public class UsersController : BaseController
+    public class DepartmentsController : BaseController
     {
-        private const string relativeURI = "Users";
+        private const string relativeURI = "Departments";
         //private static string token = "";
 
         [HttpGet]
         public async Task<ActionResult> IndexAsync()
         {
             DateTime t1 = DateTime.Now;
-            UserModelList Usermodellist = new UserModelList();
+            DepartmentModelList departmentmodellist = new DepartmentModelList();
             token = HttpContext.Session.GetString("Token");
 
             HttpResponseMessage response = await _webApiClient.GetAsync(relativeURI, token);
@@ -28,11 +28,11 @@ namespace POS.UI.MVC.Controllers
             if (VerifyResponse(response, out responseMessage))
             {
                 var requestResult = await response.Content.ReadAsStringAsync();
-                Usermodellist = (UserModelList)JsonConvert.DeserializeObject<UserModelList>(requestResult);
+                departmentmodellist = (DepartmentModelList)JsonConvert.DeserializeObject<DepartmentModelList>(requestResult);
 
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return View("Index", Usermodellist);
+                return View("Index", departmentmodellist);
             }
             else
             {
@@ -53,12 +53,12 @@ namespace POS.UI.MVC.Controllers
         [ValidateAntiForgeryToken]
         [HttpPost]
 
-        public async Task<ActionResult> CreateUserAsync(UserModel UserModel)
+        public async Task<ActionResult> CreateDepartmentAsync(DepartmentModel DepartmentModel)
         {
-            if (ModelState.IsValid && UserModel != null)
+            if (ModelState.IsValid && DepartmentModel != null)
             {
                 DateTime t1 = DateTime.Now;              
-                var jsonData = JsonConvert.SerializeObject(UserModel, Formatting.Indented, new JsonSerializerSettings()
+                var jsonData = JsonConvert.SerializeObject(DepartmentModel, Formatting.Indented, new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 });
@@ -68,10 +68,10 @@ namespace POS.UI.MVC.Controllers
                 if (VerifyResponse(response, out responseMessage))
                 {
                     var requestResult = await response.Content.ReadAsStringAsync();
-                    UserModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
+                    DepartmentModel = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                    return await Task.FromResult<ActionResult>(Json(UserModel));
+                    return await Task.FromResult<ActionResult>(Json(DepartmentModel));
                 }
                 else
                 {
@@ -90,7 +90,7 @@ namespace POS.UI.MVC.Controllers
             if (id > 0)
             {
                 DateTime t1 = DateTime.Now;
-                UserModel UserModel = new UserModel();
+                DepartmentModel DepartmentModel = new DepartmentModel();
              
                 HttpResponseMessage response = await _webApiClient.GetAsync(relativeURI + "/" + id, token);
 
@@ -98,10 +98,10 @@ namespace POS.UI.MVC.Controllers
                 if (VerifyResponse(response, out responseMessage))
                 {
                     var requestResult = await response.Content.ReadAsStringAsync();
-                    UserModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
+                    DepartmentModel = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                    return PartialView("_Update", UserModel);
+                    return PartialView("_Update", DepartmentModel);
                 }
                 else
                 {
@@ -116,12 +116,12 @@ namespace POS.UI.MVC.Controllers
 
         [HttpPost]
 
-        public async Task<ActionResult> UpdateUserAsync(UserModel UserModel)
+        public async Task<ActionResult> UpdateDepartmentAsync(DepartmentModel DepartmentModel)
         {
-            if (ModelState.IsValid && UserModel != null)
+            if (ModelState.IsValid && DepartmentModel != null)
             {
                 DateTime t1 = DateTime.Now;
-                var jsonData = JsonConvert.SerializeObject(UserModel, Formatting.Indented, new JsonSerializerSettings()
+                var jsonData = JsonConvert.SerializeObject(DepartmentModel, Formatting.Indented, new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
@@ -132,10 +132,10 @@ namespace POS.UI.MVC.Controllers
                 if (VerifyResponse(response, out responseMessage))
                 {
                     var requestResult = await response.Content.ReadAsStringAsync();
-                    UserModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
+                    DepartmentModel = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                    return await Task.FromResult<ActionResult>(Json(UserModel));
+                    return await Task.FromResult<ActionResult>(Json(DepartmentModel));
                 }
                 else
                 {
@@ -155,7 +155,7 @@ namespace POS.UI.MVC.Controllers
             if (id > 0)
             {
                 DateTime t1 = DateTime.Now;
-                UserModel UserModel = new UserModel();
+                DepartmentModel DepartmentModel = new DepartmentModel();
                 var _username = "Zaw";
                 var apiURI = relativeURI + "/" + id + "/" + _username;
             
@@ -165,7 +165,7 @@ namespace POS.UI.MVC.Controllers
                 if (VerifyResponse(response, out responseMessage))
                 {
                     var requestResult = response.Content.ReadAsStringAsync().Result;
-                    UserModel = (UserModel)JsonConvert.DeserializeObject<UserModel>(requestResult);
+                    DepartmentModel = (DepartmentModel)JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
                 }
                 else
                 {
@@ -173,79 +173,13 @@ namespace POS.UI.MVC.Controllers
                 }
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return await Task.FromResult<ActionResult>(Json(UserModel));
+                return await Task.FromResult<ActionResult>(Json(DepartmentModel));
             }
             else
             {
                 return this.StatusCode(StatusCodes.Status400BadRequest, ErrorKeys.InvalidInput);
             }
         }
-
-        [HttpGet]
-        public ActionResult Login()
-        {
-            return View("Login");
-        }
-
-
-        [ValidateAntiForgeryToken]
-        [HttpPost]
-
-        public async Task<ActionResult> Login(UserModel userModel)
-        {
-            if (ModelState.IsValid && userModel != null)
-            {
-                DateTime t1 = DateTime.Now;
-                var jsonData = JsonConvert.SerializeObject(userModel, Formatting.Indented, new JsonSerializerSettings()
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
-
-                HttpResponseMessage response = await _webApiClient.PostAsync(relativeURI + "/Login", jsonData, null);
-
-                var responseMessage = string.Empty;
-                if (VerifyResponse(response, out responseMessage))
-                {
-                    var requestResult = await response.Content.ReadAsStringAsync();
-                    userModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
-                    if (userModel.ResultCode == 0)
-                    {
-                        HttpContext.Session.SetInt32("UserId", userModel.User_ID);
-                        HttpContext.Session.SetString("Email", userModel.Email);
-
-                        var menu = "Dashboard";
-                        var actionURL = "Home/Dashboard/";
-
-                        TimeSpan ts = DateTime.Now.Subtract(t1);
-                        _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-
-                        HttpContext.Session.SetString("Token", userModel.Token);
-
-                        return RedirectToAction("Index", "Home", new { menu = menu, actionURL = actionURL });
-                    }
-                    else
-                    {
-                        return View("Login");
-                    }
-                }
-                else
-                {
-                    return this.StatusCode((int)response.StatusCode, responseMessage);
-                }
-            }
-            else
-            {
-                return this.StatusCode(StatusCodes.Status400BadRequest, ErrorKeys.InvalidInput);
-            }
-        }
-
-        public ActionResult Logout()
-        {
-            DateTime t1 = DateTime.Now;
-            TimeSpan ts = DateTime.Now.Subtract(t1);
-            _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-            HttpContext.Session.Clear();
-            return RedirectToAction("Login", "Users");
-        }
+       
     }
 }

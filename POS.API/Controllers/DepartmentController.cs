@@ -17,61 +17,26 @@ namespace POS.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : BaseController
+    public class DepartmentsController : BaseController
     {
-        private readonly IUserservice _Userservice;
+        private readonly IDepartmentservice _departmentService;
 
-        public UsersController(IUserservice Userservice)
+        public DepartmentsController(IDepartmentservice Departmentservice)
         {
-            _Userservice = Userservice;
-        }
-
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("Login")]
-        public async Task<ActionResult<UserModel>> Login(UserModel model)
-        {
-            if (model == null)
-            {
-                return this.StatusCode(StatusCodes.Status400BadRequest, ErrorKeys.InvalidInput);
-            }
-            try
-            {
-                DateTime t1 = DateTime.Now;
-                var userModel = await _Userservice.LoginUser(model);
-                TimeSpan ts = DateTime.Now.Subtract(t1);
-                _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return Ok(userModel);
-
-            }
-            catch (EntityNotFoundException ex)
-            {
-                _logger.LogError(ex);
-                return this.StatusCode(StatusCodes.Status500InternalServerError, ErrorKeys.EntityNotFound);
-            }
-            catch (DependencyNotFoundException ex)
-            {
-                _logger.LogError(ex);
-                return this.StatusCode(StatusCodes.Status500InternalServerError, ErrorKeys.DependecyNotFound);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex);
-                return this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message.ToString());
-            }
+            _departmentService = Departmentservice;
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<UserModelList>> Get()
+        public async Task<ActionResult<DepartmentModelList>> Get()
         {
             try
             {
                 DateTime t1 = DateTime.Now;
-                var Usermodellist = await _Userservice.GetAllUsers();
+                var Departmentmodellist = await _departmentService.GetAllDepartments();
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return Ok(Usermodellist);
+                return Ok(Departmentmodellist);
             }
             catch (Exception ex)
             {
@@ -82,7 +47,7 @@ namespace POS.API.Controllers
 
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserModel>> Get(int id)
+        public async Task<ActionResult<DepartmentModel>> Get(int id)
         {
             if (id <= 0)
             {
@@ -92,7 +57,7 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var userModel = await _Userservice.GetUserById(id);
+                var userModel = await _departmentService.GetDepartmentById(id);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
                 return Ok(userModel);
@@ -106,7 +71,7 @@ namespace POS.API.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<UserModel>> Post(UserModel model)
+        public async Task<ActionResult<DepartmentModel>> Post(DepartmentModel model)
         {
             if (model == null)
             {
@@ -116,10 +81,10 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var userModel = await _Userservice.CreateUser(model);
+                var userModel = await _departmentService.CreateDepartment(model);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return CreatedAtAction(nameof(Get), new { id = userModel.User_ID }, userModel);
+                return CreatedAtAction(nameof(Get), new { id = userModel.Department_ID }, userModel);
 
             }
             catch (EntityNotFoundException ex)
@@ -141,7 +106,7 @@ namespace POS.API.Controllers
         }
         [Authorize]
         [HttpPut]
-        public async Task<ActionResult<UserModel>> Put(UserModel model)
+        public async Task<ActionResult<DepartmentModel>> Put(DepartmentModel model)
         {
             if (model == null)
             {
@@ -149,8 +114,8 @@ namespace POS.API.Controllers
             }
             try
             {
-                var userModel = await _Userservice.UpdateUser(model);
-                return CreatedAtAction(nameof(Get), new { id = userModel.User_ID }, userModel);
+                var userModel = await _departmentService.UpdateDepartment(model);
+                return CreatedAtAction(nameof(Get), new { id = userModel.Department_ID }, userModel);
             }
             catch (EntityNotFoundException ex)
             {
@@ -168,8 +133,8 @@ namespace POS.API.Controllers
             }
         }
         [Authorize]
-        [HttpDelete("{id:int:min(1)}/{auditUserName}")]
-        public async Task<ActionResult<UserModel>> Delete(int id, string auditUserName)
+        [HttpDelete("{id:int:min(1)}/{auditDepartmentName}")]
+        public async Task<ActionResult<DepartmentModel>> Delete(int id, string auditDepartmentName)
         {
             if (id <= 0)
             {
@@ -178,7 +143,7 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var userModel = await _Userservice.DeleteUser(id, auditUserName);
+                var userModel = await _departmentService.DeleteDepartment(id, auditDepartmentName);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
                 return Ok(userModel);

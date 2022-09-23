@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace POS.Domain.Models
+namespace POS.Domain.EntityModels
 {
     public abstract class BaseResponse
     {       

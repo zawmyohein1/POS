@@ -61,6 +61,24 @@ namespace POS.Infrastructure.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DepartmentNameAlreadyExist.
+        /// </summary>
+        internal static string DepartmentNameAlreadyExist {
+            get {
+                return ResourceManager.GetString("DepartmentNameAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid Department Name.
+        /// </summary>
+        internal static string InvalidDepartmentName {
+            get {
+                return ResourceManager.GetString("InvalidDepartmentName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid Email.
         /// </summary>
         internal static string InvalidEmail {
@@ -75,6 +93,15 @@ namespace POS.Infrastructure.Exceptions {
         internal static string InvalidPassword {
             get {
                 return ResourceManager.GetString("InvalidPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Department Info Availiable.
+        /// </summary>
+        internal static string NoDepartmentInfoAvailiable {
+            get {
+                return ResourceManager.GetString("NoDepartmentInfoAvailiable", resourceCulture);
             }
         }
         

@@ -1,6 +1,4 @@
-﻿using POS.Domain.Models;
-using POS.Domain.ViewModels;
-using System;
+﻿using POS.Domain.EntityModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

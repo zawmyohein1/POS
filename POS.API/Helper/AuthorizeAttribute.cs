@@ -1,4 +1,4 @@
-using POS.Domain.Models;
+using POS.Domain.EntityModels;
 using POS.Domain.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

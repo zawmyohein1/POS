@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace POS.Infrastructure.Data.Repository
 {
-    public class UserReposity : IUserRepository
+    public class DepartmentReposity : IDepartmentRepository
     {
         protected readonly DbContextOptions _option;
 
-        public UserReposity(DbContextOptions option)
+        public DepartmentReposity(DbContextOptions option)
         {
             _option = option;
         }
 
-        public async Task<List<User>> GetAllUsersAsync()
+        public async Task<List<Department>> GetAllDepartmentsAsync()
         {
             using (var _dbContext = new POSDbContext(_option))
             {
@@ -26,8 +26,8 @@ namespace POS.Infrastructure.Data.Repository
                 {
                     try
                     {
-                        var userList = _dbContext.Users.Where(x => x.IsDeleted == false).ToList();
-                        return await Task.FromResult<List<User>>(userList);
+                        var userList = _dbContext.Departments.Where(x => x.IsDeleted == false).ToList();
+                        return await Task.FromResult<List<Department>>(userList);
                     }
                     catch (Exception ex)
                     {
@@ -38,7 +38,7 @@ namespace POS.Infrastructure.Data.Repository
             }
         }
 
-        public async Task<User> CreateUserAsync(User entity)
+        public async Task<Department> CreateDepartmentAsync(Department entity)
         {
             using (var _dbContext = new POSDbContext(_option))
             {
@@ -46,7 +46,7 @@ namespace POS.Infrastructure.Data.Repository
                 {
                     try
                     {
-                        _dbContext.Users.Add(entity);
+                        _dbContext.Departments.Add(entity);
                         _dbContext.SaveChanges();
                         dbContextTransaction.Commit();
                     }
@@ -56,11 +56,11 @@ namespace POS.Infrastructure.Data.Repository
                         throw ex;
                     }
                 }
-                return await Task.FromResult<User>(entity);
+                return await Task.FromResult<Department>(entity);
             }
         }
 
-        public async Task<User> GetUserByIdAsync(int userId)
+        public async Task<Department> GetDepartmentByIdAsync(int departmentId)
         {
             using (var _dbContext = new POSDbContext(_option))
             {
@@ -68,8 +68,8 @@ namespace POS.Infrastructure.Data.Repository
                 {
                     try
                     {
-                        var entity = _dbContext.Users.Where(x => x.User_ID == userId).FirstOrDefault();
-                        return await Task.FromResult<User>(entity);
+                        var entity = _dbContext.Departments.Where(x => x.Department_ID == departmentId).FirstOrDefault();
+                        return await Task.FromResult<Department>(entity);
                     }
                     catch (Exception ex)
                     {
@@ -80,7 +80,7 @@ namespace POS.Infrastructure.Data.Repository
             }
         }
 
-        public async Task<User> UpdateUserAsync(User entity)
+        public async Task<Department> UpdateDepartmentAsync(Department entity)
         {
             using (var _dbContext = new POSDbContext(_option))
             {
@@ -100,10 +100,10 @@ namespace POS.Infrastructure.Data.Repository
                     }
                 }
             }
-            return await Task.FromResult<User>(entity);
+            return await Task.FromResult<Department>(entity);
         }
 
-        public async Task<User> DeleteUserAsync(User entity)
+        public async Task<Department> DeleteDepartmentAsync(Department entity)
         {
             using (var _dbContext = new POSDbContext(_option))
             {
@@ -123,10 +123,10 @@ namespace POS.Infrastructure.Data.Repository
                     }
                 }
             }
-            return await Task.FromResult<User>(entity);
-        }
+            return await Task.FromResult<Department>(entity);
+        }   
 
-        public async Task<User> LoginUserAsync(string email, string password)
+        public async Task<Department> CheckDuplicate(Department department)
         {
             using (var _dbContext = new POSDbContext(_option))
             {
@@ -134,28 +134,8 @@ namespace POS.Infrastructure.Data.Repository
                 {
                     try
                     {
-                        var entity = _dbContext.Users.Where(x => x.Email == email && x.Password == password).FirstOrDefault();
-                        return await Task.FromResult<User>(entity);
-                    }
-                    catch (Exception ex)
-                    {
-                        dbContextTransaction.Rollback();
-                        throw ex;
-                    }
-                }
-            }
-        }
-
-        public async Task<User> CheckDuplicate(User user)
-        {
-            using (var _dbContext = new POSDbContext(_option))
-            {
-                using (var dbContextTransaction = _dbContext.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        var entity = _dbContext.Users.Where(x => x.Email == user.Email && x.User_ID != user.User_ID && x.IsDeleted == false).FirstOrDefault();
-                        return await Task.FromResult<User>(entity);
+                        var entity = _dbContext.Departments.Where(x => x.Department_Name == department.Department_Name && x.Department_ID != department.Department_ID && x.IsDeleted == false).FirstOrDefault();
+                        return await Task.FromResult<Department>(entity);
                     }
                     catch (Exception ex)
                     {
