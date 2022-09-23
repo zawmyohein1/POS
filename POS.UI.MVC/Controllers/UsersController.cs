@@ -12,8 +12,7 @@ namespace POS.UI.MVC.Controllers
 {
     public class UsersController : BaseController
     {
-        private const string relativeURI = "Users";
-        //private static string token = "";
+        private const string relativeURI = "Users";      
 
         [HttpGet]
         public async Task<ActionResult> IndexAsync()
@@ -114,8 +113,8 @@ namespace POS.UI.MVC.Controllers
             }
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost]
-
         public async Task<ActionResult> UpdateUserAsync(UserModel UserModel)
         {
             if (ModelState.IsValid && UserModel != null)
@@ -149,7 +148,6 @@ namespace POS.UI.MVC.Controllers
         }
 
         [HttpPost]
-
         public async Task<ActionResult> DeleteAsync(int id)
         {
             if (id > 0)
@@ -187,10 +185,8 @@ namespace POS.UI.MVC.Controllers
             return View("Login");
         }
 
-
         [ValidateAntiForgeryToken]
         [HttpPost]
-
         public async Task<ActionResult> Login(UserModel userModel)
         {
             if (ModelState.IsValid && userModel != null)
@@ -238,7 +234,6 @@ namespace POS.UI.MVC.Controllers
                 return this.StatusCode(StatusCodes.Status400BadRequest, ErrorKeys.InvalidInput);
             }
         }
-
         public ActionResult Logout()
         {
             DateTime t1 = DateTime.Now;

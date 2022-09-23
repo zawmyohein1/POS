@@ -55,7 +55,7 @@ namespace POS.UI.MVC.Controllers
         {
             if (ModelState.IsValid && DepartmentModel != null)
             {
-                DateTime t1 = DateTime.Now;              
+                DateTime t1 = DateTime.Now;
                 var jsonData = JsonConvert.SerializeObject(DepartmentModel, Formatting.Indented, new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -78,7 +78,7 @@ namespace POS.UI.MVC.Controllers
             }
             else
             {
-                return this.StatusCode(StatusCodes.Status400BadRequest,ErrorKeys.InvalidInput);
+                return this.StatusCode(StatusCodes.Status400BadRequest, ErrorKeys.InvalidInput);
             }
         }
 
@@ -89,7 +89,7 @@ namespace POS.UI.MVC.Controllers
             {
                 DateTime t1 = DateTime.Now;
                 DepartmentModel DepartmentModel = new DepartmentModel();
-             
+
                 HttpResponseMessage response = await _webApiClient.GetAsync(relativeURI + "/" + id, token);
 
                 var responseMessage = string.Empty;
@@ -113,6 +113,7 @@ namespace POS.UI.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateDepartmentAsync(DepartmentModel DepartmentModel)
         {
             if (ModelState.IsValid && DepartmentModel != null)
@@ -122,7 +123,7 @@ namespace POS.UI.MVC.Controllers
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
-                
+
                 HttpResponseMessage response = await _webApiClient.PutAsync(relativeURI, jsonData, token);
 
                 var responseMessage = string.Empty;
@@ -154,7 +155,7 @@ namespace POS.UI.MVC.Controllers
                 DepartmentModel DepartmentModel = new DepartmentModel();
                 var _username = "Zaw";
                 var apiURI = relativeURI + "/" + id + "/" + _username;
-            
+
                 var response = await _webApiClient.DeleteAsync(apiURI, token);
                 var responseMessage = string.Empty;
 
@@ -176,6 +177,6 @@ namespace POS.UI.MVC.Controllers
                 return this.StatusCode(StatusCodes.Status400BadRequest, ErrorKeys.InvalidInput);
             }
         }
-       
+
     }
 }
