@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POS.Infrastructure.Exceptio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POS.Infrastructure.Common", "POS.Infrastructure.Common\POS.Infrastructure.Common.csproj", "{050BBCB8-EBE7-4525-A901-7E5E9A634C94}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POS.Test", "POS.Test\POS.Test.csproj", "{DB2A919C-6AA2-429B-AC39-5A3F8A9497AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{050BBCB8-EBE7-4525-A901-7E5E9A634C94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{050BBCB8-EBE7-4525-A901-7E5E9A634C94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{050BBCB8-EBE7-4525-A901-7E5E9A634C94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB2A919C-6AA2-429B-AC39-5A3F8A9497AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB2A919C-6AA2-429B-AC39-5A3F8A9497AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB2A919C-6AA2-429B-AC39-5A3F8A9497AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB2A919C-6AA2-429B-AC39-5A3F8A9497AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{93CF5A5F-4E45-4B5E-87F8-4FD0F01D6539} = {912938FE-0239-4981-BF37-2116FF955973}
 		{AB07B84F-F13D-49F2-8B77-39C699E413FA} = {F3CD76FB-6596-42F4-91E5-CCE626F051B2}
 		{050BBCB8-EBE7-4525-A901-7E5E9A634C94} = {F3CD76FB-6596-42F4-91E5-CCE626F051B2}
+		{DB2A919C-6AA2-429B-AC39-5A3F8A9497AF} = {912938FE-0239-4981-BF37-2116FF955973}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D915DC64-B822-46CD-A7A5-9E6FFBDE892D}

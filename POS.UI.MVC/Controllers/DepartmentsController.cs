@@ -13,7 +13,6 @@ namespace POS.UI.MVC.Controllers
     public class DepartmentsController : BaseController
     {
         private const string relativeURI = "Departments";
-        //private static string token = "";
 
         [HttpGet]
         public async Task<ActionResult> IndexAsync()
@@ -52,7 +51,6 @@ namespace POS.UI.MVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-
         public async Task<ActionResult> CreateDepartmentAsync(DepartmentModel DepartmentModel)
         {
             if (ModelState.IsValid && DepartmentModel != null)
@@ -115,7 +113,6 @@ namespace POS.UI.MVC.Controllers
         }
 
         [HttpPost]
-
         public async Task<ActionResult> UpdateDepartmentAsync(DepartmentModel DepartmentModel)
         {
             if (ModelState.IsValid && DepartmentModel != null)
@@ -149,7 +146,6 @@ namespace POS.UI.MVC.Controllers
         }
 
         [HttpPost]
-
         public async Task<ActionResult> DeleteAsync(int id)
         {
             if (id > 0)
