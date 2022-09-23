@@ -69,6 +69,7 @@ namespace POS.API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message.ToString());
             }
         }
+
         [Authorize]
         [HttpPost]
         public async Task<ActionResult<DepartmentModel>> Post(DepartmentModel model)
@@ -104,6 +105,7 @@ namespace POS.API.Controllers
             }
 
         }
+
         [Authorize]
         [HttpPut]
         public async Task<ActionResult<DepartmentModel>> Put(DepartmentModel model)
@@ -114,8 +116,8 @@ namespace POS.API.Controllers
             }
             try
             {
-                var userModel = await _departmentService.UpdateDepartment(model);
-                return CreatedAtAction(nameof(Get), new { id = userModel.Department_ID }, userModel);
+                var departmentModel = await _departmentService.UpdateDepartment(model);
+                return CreatedAtAction(nameof(Get), new { id = departmentModel.Department_ID }, departmentModel);
             }
             catch (EntityNotFoundException ex)
             {
@@ -132,6 +134,7 @@ namespace POS.API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message.ToString());
             }
         }
+
         [Authorize]
         [HttpDelete("{id:int:min(1)}/{auditDepartmentName}")]
         public async Task<ActionResult<DepartmentModel>> Delete(int id, string auditDepartmentName)
@@ -143,10 +146,10 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var userModel = await _departmentService.DeleteDepartment(id, auditDepartmentName);
+                var departmentModel = await _departmentService.DeleteDepartment(id, auditDepartmentName);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                return Ok(userModel);
+                return Ok(departmentModel);
             }
             catch (EntityNotFoundException ex)
             {

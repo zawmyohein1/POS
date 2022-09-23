@@ -5,7 +5,7 @@
 
             @Html.AntiForgeryToken()
             <div class="modal-content ">
-                <input type="hidden" id="Id" name="Id" asp-for="@Model.Department_ID" />
+                <input type="hidden" id="Department_ID" name="Department_ID" asp-for="@Model.Department_ID" />
                 <div class="modal-header bg-primary">
                     <h4 class="modal-title">Update Department</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -15,13 +15,13 @@
 
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="txtName">Name</label>
-                        <input type="text" class="form-control" name="Name" placeholder="Name" id="txtName" value="@Model.Department_ID">
+                        <label for="txtDeartmentName">Name</label>
+                        <input type="text" class="form-control" name="Department_Name" placeholder="Name" id="txtDeartmentName" value="@Model.Department_Name">
                     </div>
                     <div class="form-group">
-                        <label for="txtDescription">Email</label>
-                        <input type="text" class="form-control" name="Email" placeholder="Description" id="txtDescription" value="@Model.Description">
-                    </div>                  
+                        <label for="txtDescription">Description</label>
+                        <input type="text" class="form-control" name="Description" placeholder="Description" id="txtDescription" value="@Model.Description">
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -59,37 +59,21 @@
         });
 
         $('#form_validation').validate({
-            rules: {              
+            rules: {
                 Name: {
                     required: true
                 },
                 Description: {
                     required: true
                 },
-
-                Specialist: {
-                    required: true
-                },
             },
             messages: {
-                Email: {
-                    required: "Please enter a email address",
-                    email: "Please enter a vaild email address"
-                },
-                Password: {
-                    required: "Please provide a password",
-                    minlength: "Your password must be at least 5 characters long"
-                },
                 Name: {
-                    required: "Please enter a name",
+                    required: "Please enter a department name",
 
                 },
                 Phone: {
-                    required: "Please enter a phone",
-                },
-                Specialist: {
-                    required: "Please enter a specialist",
-
+                    required: "Please enter a department description",
                 },
             },
             errorElement: 'span',

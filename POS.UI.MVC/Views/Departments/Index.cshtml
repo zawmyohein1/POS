@@ -26,7 +26,7 @@
                         <table class="table table-striped projects customTbl scrollWrapTbl listingTbl">
                             <thead>
                                 <tr>
-                                    <th>Id</th>
+
                                     <th>Name</th>
                                     <th>Description</th>
                                     <th>Action</th>
@@ -36,9 +36,8 @@
                                 @foreach (var item in Model.departmentModelList)
                                 {
                                     <tr>
-                                        <td>@Html.DisplayFor(modelItem => item.Department_ID)</td>
                                         <td>@Html.DisplayFor(modelItem => item.Department_Name)</td>
-                                        <td>@Html.DisplayFor(modelItem => item.Description)</td>                                       
+                                        <td>@Html.DisplayFor(modelItem => item.Description)</td>
                                         <td><a href="#" class="lnkEdit" data-para="@item.Department_ID"><i class="fa fa-fw fa-edit"></i></a> | <a href="#" class="lnkDelete" data-para="@item.Department_ID"><i class="fa fa-fw fa-trash"></i></a></td>
                                     </tr>
                                 }
@@ -59,9 +58,6 @@
 </section>
 
 
-
-
-
 <!-- Modal -->
 <div id="ppcreate">
 
@@ -70,8 +66,6 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-
-        console.log("hrere");
 
         $('#btnAddNew').click(function () {
             var relativeURI='@Url.Action("Create","Departments")';
@@ -86,6 +80,7 @@
                    renderPPPartialView(relativeURI);
                 }
         });
+
         $('.customTbl').on('click', '.lnkDelete', function () {
 
             var tdCount = $('tbody tr').length;
