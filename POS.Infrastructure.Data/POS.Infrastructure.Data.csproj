@@ -20,7 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\POS.Domain\POS.Domain.csproj" />
     <ProjectReference Include="..\POS.Infrastructure.Logger\POS.Infrastructure.Logger.csproj" />
-    <ProjectReference Include="..\POS.Infrastructure.Mapper\POS.Infrastructure.Mapper.csproj" />
   </ItemGroup>
 
 </Project>

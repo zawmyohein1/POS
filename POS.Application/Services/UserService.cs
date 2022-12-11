@@ -1,19 +1,19 @@
-﻿using POS.Infrastructure.Mapper;
+﻿using System;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
+using AutoMapper;
+using POS.Application.Helper;
 using POS.Domain.IRepositories;
 using POS.Domain.IServices;
 using POS.Domain.EntityModels;
 using POS.Domain.ViewModels;
 using POS.Infrastructure.Data.Helper;
 using POS.Infrastructure.Logger;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Options;
-using POS.Application.Helper;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 using WebApi.POS.Application.Helper;
 using POS.Infrastructure.Exceptions;
 
@@ -21,26 +21,33 @@ namespace POS.Application.Services
 {
     public class Userservice : IUserservice
     {
-        private IUserRepository _repository;
+        private IGenericRepository<User> _grepository;
         private ILoggerHelper _logger;
         private readonly AppSettings _appSettings;
+        private readonly IMapper _mapper;
 
-        public Userservice(IUserRepository repository, ILoggerHelper logger, IOptions<AppSettings> appSettings)
+        public Userservice(IGenericRepository<User> grepository, ILoggerHelper logger, IOptions<AppSettings> appSettings, IMapper mapper)
         {
-            _repository = repository;
+            _grepository = grepository;
             _logger = logger;
             _appSettings = appSettings.Value;
+            _mapper = mapper;
         }
 
         public async Task<UserModelList> GetAllUsers()
         {
             UserModelList modelList = new UserModelList();
+
             try
             {
-                var entityList = await _repository.GetAllUsersAsync();
-                if (entityList != null)
+                var entities = await _grepository.GetAllAsyn();
+                if (entities != null)
                 {
-                    modelList.userModelList = entityList.Select<User, UserModel>((UserEntity => { return UserConverter.ConvertEntityToModel(UserEntity); })).ToList();
+                    modelList.userModelList = entities.Select<User, UserModel>((UserEntity =>
+                    {
+                        return _mapper.Map<UserModel>(UserEntity);
+                    })).ToList();
+
                     modelList.ResultCode = (int)CustomExceptionEnum.Success;
                     modelList.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                 }
@@ -66,20 +73,19 @@ namespace POS.Application.Services
 
         public async Task<UserModel> CreateUser(UserModel model)
         {
-            var entity = new User();
-            UserConverter.ConvertModelToEntity(model, ref entity);
+            var entity = _mapper.Map<User>(model);
+
             try
             {
-                var duplicateEntity = await _repository.CheckDuplicate(entity);
+                var duplicateEntity = await _grepository.FindAsync(x => x.Email == model.Email && x.User_ID != model.User_ID && x.IsDeleted == false);
                 if (duplicateEntity == null)
                 {
-                    entity = await _repository.CreateUserAsync(entity);
-                   
+                    entity = await _grepository.AddAsyn(entity);
+
                     //insert recrod to audit trail table after insert user record
                     AuditTrail.InsertAuditTrail(AuditAction.Add, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
-                    
-                    model.User_ID = entity.User_ID;
 
+                    model.User_ID = entity.User_ID;
                     model.ResultCode = (int)CustomExceptionEnum.Success;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                 }
@@ -106,12 +112,12 @@ namespace POS.Application.Services
         public async Task<UserModel> GetUserById(int Id)
         {
             var model = new UserModel();
-            var entity = await _repository.GetUserByIdAsync(Id);
+            var entity = await _grepository.GetAsync(Id);
             try
             {
                 if (entity != null)
                 {
-                    model = UserConverter.ConvertEntityToModel(entity);
+                    model = _mapper.Map<UserModel>(entity);
                     model.ResultCode = (int)CustomExceptionEnum.Success;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                 }
@@ -139,21 +145,21 @@ namespace POS.Application.Services
         {
             try
             {
-                var entity = await _repository.GetUserByIdAsync(model.User_ID);
+                var entity = await _grepository.GetAsync(model.User_ID);
                 if (entity != null)
                 {
-                    var duplicateEntity = await _repository.CheckDuplicate(entity);
+                    var duplicateEntity = await _grepository.FindAsync(x => x.Email == model.Email && x.User_ID != model.User_ID && x.IsDeleted == false);
                     if (duplicateEntity == null)
                     {
                         //insert record to audit trail table before user edit record
                         AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
-                        
-                        UserConverter.ConvertModelToEntity(model, ref entity);
-                        await _repository.UpdateUserAsync(entity);
+
+                        entity = _mapper.Map<User>(model);
+                        await _grepository.UpdateAsyn(entity, entity.User_ID);
 
                         //insert record to audit trail table after user edit record
                         AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
-                       
+
                         model.ResultCode = (int)CustomExceptionEnum.Success;
                         model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                     }
@@ -188,14 +194,14 @@ namespace POS.Application.Services
             var model = new UserModel();
             try
             {
-                var entity = await _repository.GetUserByIdAsync(Id);
+                var entity = await _grepository.GetAsync(Id);
                 if (entity != null)
                 {
                     entity.IsDeleted = true;
-                    await _repository.DeleteUserAsync(entity);
-                   
+                    await _grepository.DeleteAsyn(entity);
+
                     AuditTrail.InsertAuditTrail(AuditAction.Delete, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
-                   
+
                     model.ResultCode = (int)CustomExceptionEnum.Success;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                 }
@@ -223,7 +229,7 @@ namespace POS.Application.Services
         {
             try
             {
-                var entity = await _repository.LoginUserAsync(model.Email, model.Password);
+                var entity = await _grepository.FindByAsyn(x => x.Email == model.Email && x.Password == model.Password);
                 if (entity != null)
                 {
                     model.ResultCode = (int)CustomExceptionEnum.Success;
@@ -232,7 +238,7 @@ namespace POS.Application.Services
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
                     var tokenDescriptor = new SecurityTokenDescriptor
-                    { 
+                    {
                         Subject = new ClaimsIdentity(new[] { new Claim("id", model.User_ID.ToString()) }),
                         Expires = DateTime.UtcNow.AddDays(7), //update later with configurable setting
                         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

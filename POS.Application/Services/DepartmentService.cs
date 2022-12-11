@@ -1,5 +1,4 @@
-﻿using POS.Infrastructure.Mapper;
-using POS.Domain.IRepositories;
+﻿using POS.Domain.IRepositories;
 using POS.Domain.IServices;
 using POS.Domain.EntityModels;
 using POS.Domain.ViewModels;
@@ -8,14 +7,8 @@ using POS.Infrastructure.Logger;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Options;
-using POS.Application.Helper;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using WebApi.POS.Application.Helper;
 using POS.Infrastructure.Exceptions;
+using AutoMapper;
 
 namespace POS.Application.Services
 {
@@ -23,13 +16,13 @@ namespace POS.Application.Services
     {
         private IDepartmentRepository _repository;
         private ILoggerHelper _logger;
-        private readonly AppSettings _appSettings;
+        private readonly IMapper _mapper;
 
-        public Departmentservice(IDepartmentRepository repository, ILoggerHelper logger, IOptions<AppSettings> appSettings)
+        public Departmentservice(IDepartmentRepository repository, ILoggerHelper logger, IMapper mapper)
         {
             _repository = repository;
             _logger = logger;
-            _appSettings = appSettings.Value;
+            _mapper = mapper;
         }
 
         public async Task<DepartmentModelList> GetAllDepartments()
@@ -40,7 +33,8 @@ namespace POS.Application.Services
                 var entityList = await _repository.GetAllDepartmentsAsync();
                 if (entityList != null)
                 {
-                    modelList.departmentModelList = entityList.Select<Department, DepartmentModel>((DepartmentEntity => { return DepartmentConverter.ConvertEntityToModel(DepartmentEntity); })).ToList();
+                    //modelList.departmentModelList = entityList.Select<Department, DepartmentModel>((DepartmentEntity => { return DepartmentConverter.ConvertEntityToModel(DepartmentEntity); })).ToList();
+                    modelList.departmentModelList = entityList.Select<Department, DepartmentModel>((DepartmentEntity => { return _mapper.Map<DepartmentModel>(DepartmentEntity); })).ToList();
                     modelList.ResultCode = (int)CustomExceptionEnum.Success;
                     modelList.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                 }
@@ -66,8 +60,8 @@ namespace POS.Application.Services
 
         public async Task<DepartmentModel> CreateDepartment(DepartmentModel model)
         {
-            var entity = new Department();
-            DepartmentConverter.ConvertModelToEntity(model, ref entity);
+            var entity = _mapper.Map<Department>(model);
+            //DepartmentConverter.ConvertModelToEntity(model, ref entity);
             try
             {
                 var duplicateEntity = await _repository.CheckDuplicate(entity);
@@ -107,7 +101,9 @@ namespace POS.Application.Services
             {
                 if (entity != null)
                 {
-                    model = DepartmentConverter.ConvertEntityToModel(entity);
+                    //model = DepartmentConverter.ConvertEntityToModel(entity);
+
+                    model = _mapper.Map<DepartmentModel>(entity);
                     model.ResultCode = (int)CustomExceptionEnum.Success;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                 }
@@ -142,7 +138,8 @@ namespace POS.Application.Services
                     if (duplicateEntity == null)
                     {
                         AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.Department, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
-                        DepartmentConverter.ConvertModelToEntity(model, ref entity);
+                        //DepartmentConverter.ConvertModelToEntity(model, ref entity);
+                        entity = _mapper.Map<Department>(model);
                         await _repository.UpdateDepartmentAsync(entity);
                         AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.Department, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
                         model.ResultCode = (int)CustomExceptionEnum.Success;

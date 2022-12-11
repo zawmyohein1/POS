@@ -1,7 +1,9 @@
 @model POS.Domain.ViewModels.UserModelList
 
-@{ ViewBag.Title = "Listing Users";
-                Layout = null; }
+@{
+    ViewBag.Title = "Listing Users";
+    Layout = null;
+}
 
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -39,15 +41,16 @@
                             <tbody>
                                 @foreach (var item in Model.userModelList)
                                 {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => item.User_ID)</td>
-                        <td>@Html.DisplayFor(modelItem => item.User_Name)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Email)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Phone)</td>
-                        <td>   @item.Created.ToString("dd/MM/yyyy")</td>
-                        <td>@Html.DisplayFor(modelItem => item.Role)</td>
-                        <td><a href="#" class="lnkEdit" data-para="@item.User_ID"><i class="fa fa-fw fa-edit"></i></a> | <a href="#" class="lnkDelete" data-para="@item.User_ID"><i class="fa fa-fw fa-trash"></i></a></td>
-                    </tr>}
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.User_ID)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.User_Name)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                                        <td>   @item.Created.ToString("dd/MM/yyyy")</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Role)</td>
+                                        <td><a href="#" class="lnkEdit" data-para="@item.User_ID"><i class="fa fa-fw fa-edit"></i></a> | <a href="#" class="lnkDelete" data-para="@item.User_ID"><i class="fa fa-fw fa-trash"></i></a></td>
+                                    </tr>
+                                }
                             </tbody>
 
                         </table>
@@ -70,7 +73,6 @@
 
 <!-- Modal -->
 <div id="ppcreate">
-
 </div>
 
 <script type="text/javascript">
@@ -78,17 +80,17 @@
     $(document).ready(function () {
 
         $('#btnAddNew').click(function () {
-            var relativeURI='@Url.Action("Create","Users")';
-             renderPPPartialView(relativeURI);
+            var relativeURI = '@Url.Action("Create","Users")';
+            renderPPPartialView(relativeURI);
         });
 
         $('.customTbl').on('click', '.lnkEdit', function () {
-              var _id = $(this).attr('data-para');
-               if (_id > 0) {
-                    var relativeURI = "";
-                    var relativeURI = '@Url.Action("Update", "Users")?id=' + _id;
-                   renderPPPartialView(relativeURI);
-                }
+            var _id = $(this).attr('data-para');
+            if (_id > 0) {
+                var relativeURI = "";
+                var relativeURI = '@Url.Action("Update", "Users")?id=' + _id;
+                renderPPPartialView(relativeURI);
+            }
         });
         $('.customTbl').on('click', '.lnkDelete', function () {
 
@@ -99,10 +101,10 @@
             }
             else {
                 showDialog('Cannot delete this record!', "error", "", "", 0, false, false);
-                 showDialog('Cannot Delete This Record', 'AtLeast One Record Must Be Remained', "error", "", "", 0, false, false);
+                showDialog('Cannot Delete This Record', 'AtLeast One Record Must Be Remained', "error", "", "", 0, false, false);
             }
         });
-     });
+    });
 
     //script with partial render
     function renderPPPartialView(relativeURI) {

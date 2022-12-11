@@ -1,7 +1,5 @@
-using POS.API.Helper;
-using POS.Application.Helper;
-using POS.Infrastructure.Data.Context;
-using POS.Infrastructure.IoC;
+using System.Text;
+using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,8 +8,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
+
+using POS.API.Helper;
+using POS.Application.Helper;
+using POS.Infrastructure.Data.Context;
+using POS.Infrastructure.IoC;
+using POS.Domain.IRepositories;
+using POS.Infrastructure.Data.Repository;
 
 namespace POS.API
 {
@@ -29,6 +32,7 @@ namespace POS.API
         {
 
             RegisterServices(services);
+
             //services.AddCors();
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -88,8 +92,8 @@ namespace POS.API
             app.UseCors("DevCorsPolicy");
             // custom jwt auth middleware
             app.UseMiddleware<JwtMiddleware>();
-            app.UseHttpsRedirection();          
-                       
+            app.UseHttpsRedirection();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

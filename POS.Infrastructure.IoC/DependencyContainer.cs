@@ -20,13 +20,16 @@ namespace POS.Infrastructure.IoC
             _service.AddScoped<IUserservice, Userservice>();
             _service.AddScoped<IDepartmentservice, Departmentservice>();
 
-            //POS.Domain.Interfaces and repositories          
+            //POS.Domain.Interfaces and repositories                
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             _service.AddScoped<IUserRepository, UserRepository>();
             _service.AddScoped<IDepartmentRepository, DepartmentReposity>();
 
             //POS.Infrasture           
             _service.AddSingleton<ILoggerHelper>(LoggerHelper.Instance);
             _service.AddScoped<IWebApiClient, WebApiClient>();
+            _service.AddAutoMapper(typeof(Mapper.AutoMapper));
+
         }
 
         public static void UIRegisterServices(IServiceCollection services)

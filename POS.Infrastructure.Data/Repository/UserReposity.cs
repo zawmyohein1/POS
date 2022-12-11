@@ -16,6 +16,7 @@ namespace POS.Infrastructure.Data.Repository
         {
             _option = option;
         }
+
         public async Task<List<User>> GetAllUsersAsync()
         {
             using (var _dbContext = new POSDbContext(_option))

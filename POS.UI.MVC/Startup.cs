@@ -30,7 +30,7 @@ namespace POS.UI.MVC
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(1);//You can set Time   
             });
-
+            //services.AddAutoMapper(typeof(Startup));
             services.AddControllersWithViews();
         }
 
