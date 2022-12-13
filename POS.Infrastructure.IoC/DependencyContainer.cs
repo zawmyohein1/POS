@@ -6,26 +6,58 @@ using POS.Infrastructure.Data.Repository;
 using POS.Infrastructure.Logger;
 using Microsoft.Extensions.DependencyInjection;
 using POS.Infrastructure.Data.UnitOfWork;
+using System.Net.Http.Headers;
 
 namespace POS.Infrastructure.IoC
 {
-    public class DependencyContainer
+    public static class DependencyContainer
     {
         public static IServiceCollection _service;
 
-        public static void RegisterServices(IServiceCollection services)
+        public static IServiceCollection RegisterServices(IServiceCollection services)
         {
             _service = services;
 
-            //POS.Infrasture           
+            AddRepositories(services);
+            AddServices(services);
+            AddInfrastructureSevice(services);            
+
+            return services;
+
+        }
+
+        public static void UIRegisterServices(IServiceCollection services)
+        {
+            _service = services;
+            _service.AddSingleton<ILoggerHelper>(LoggerHelper.Instance);
+            _service.AddScoped<IWebApiClient, WebApiClient>();
+        }
+
+        public static IServiceCollection AddRepositories(IServiceCollection services)
+        {
+            _service.AddTransient<IUnitOfWork, UnitOfWork>();
+            _service.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            _service.AddScoped<IUserRepository, UserRepository>();          
+
+            return services;
+        }
+
+        public static IServiceCollection AddServices(IServiceCollection services)
+        {
+            _service.AddScoped<IUserservice, Userservice>();
+            _service.AddScoped<IDepartmentservice, DepartmentService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddInfrastructureSevice(IServiceCollection services)
+        {                   
             _service.AddSingleton<ILoggerHelper>(LoggerHelper.Instance);
             _service.AddScoped<IWebApiClient, WebApiClient>();
             _service.AddAutoMapper(typeof(Mapper.AutoMapper));
 
+            return services;
         }
 
-            _service.AddSingleton<ILoggerHelper>(LoggerHelper.Instance);
-            _service.AddScoped<IWebApiClient, WebApiClient>();
-        }
     }
 }

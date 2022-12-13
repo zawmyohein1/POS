@@ -13,15 +13,14 @@ namespace POS.Infrastructure.Data.UnitOfWork
         private POSDbContext _context;
         private bool _disposed;
         public IDepartmentRepository Department { get; private set; }
-        public UnitOfWork(IDepartmentRepository department)
-        {
-            Department = department;
-        }
+        public IUserRepository User { get; private set; }
+
         public UnitOfWork(POSDbContext context)
         {
             _context = context;
-            Department = new DepartmentReposity(this._context);
-        }  
+            Department = new DepartmentReposity(_context);
+            User = new UserRepository(_context);
+        }
         public IDbContextTransaction BeginTransaction()
         {
             return _context.Database.BeginTransaction();
@@ -43,7 +42,6 @@ namespace POS.Infrastructure.Data.UnitOfWork
         }
         public void Dispose()
         {
-
             Dispose(true);
             GC.SuppressFinalize(this);
         }

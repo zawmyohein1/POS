@@ -16,19 +16,20 @@ using POS.Infrastructure.Data.Helper;
 using POS.Infrastructure.Logger;
 using WebApi.POS.Application.Helper;
 using POS.Infrastructure.Exceptions;
+using POS.Infrastructure.Data.UnitOfWork;
 
 namespace POS.Application.Services
 {
     public class Userservice : IUserservice
     {
-        private IGenericRepository<User> _grepository;
+        private IUnitOfWork _unitOfWork;
         private ILoggerHelper _logger;
         private readonly AppSettings _appSettings;
         private readonly IMapper _mapper;
 
-        public Userservice(IGenericRepository<User> grepository, ILoggerHelper logger, IOptions<AppSettings> appSettings, IMapper mapper)
+        public Userservice(IUnitOfWork unitOfWork, ILoggerHelper logger, IOptions<AppSettings> appSettings, IMapper mapper)
         {
-            _grepository = grepository;
+            _unitOfWork = unitOfWork;
             _logger = logger;
             _appSettings = appSettings.Value;
             _mapper = mapper;
@@ -40,20 +41,23 @@ namespace POS.Application.Services
 
             try
             {
-                var entities = await _grepository.GetAllAsyn();
-                if (entities != null)
+                using (var transaction = _unitOfWork.BeginTransaction())
                 {
-                    modelList.userModelList = entities.Select<User, UserModel>((UserEntity =>
+                    var entities = await _unitOfWork.User.FindAllAsync(x => x.IsDeleted == false);
+                    if (entities != null)
                     {
-                        return _mapper.Map<UserModel>(UserEntity);
-                    })).ToList();
+                        modelList.userModelList = entities.Select<User, UserModel>((UserEntity =>
+                        {
+                            return _mapper.Map<UserModel>(UserEntity);
+                        })).ToList();
 
-                    modelList.ResultCode = (int)CustomExceptionEnum.Success;
-                    modelList.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
-                }
-                else
-                {
-                    throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                        modelList.ResultCode = (int)CustomExceptionEnum.Success;
+                        modelList.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
+                    }
+                    else
+                    {
+                        throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                    }
                 }
             }
             catch (CustomException ex)
@@ -73,32 +77,57 @@ namespace POS.Application.Services
 
         public async Task<UserModel> CreateUser(UserModel model)
         {
-            var entity = _mapper.Map<User>(model);
-
             try
             {
-                var duplicateEntity = await _grepository.FindAsync(x => x.Email == model.Email && x.User_ID != model.User_ID && x.IsDeleted == false);
-                if (duplicateEntity == null)
+                var entity = _mapper.Map<User>(model);
+                try
                 {
-                    entity = await _grepository.AddAsyn(entity);
+                    using (var transaction = _unitOfWork.BeginTransaction())
+                    {
+                        try
+                        {
+                            var duplicateEntity = await _unitOfWork.User.FindAsync(x => x.Email == model.Email && x.User_ID != model.User_ID && x.IsDeleted == false);
+                            if (duplicateEntity == null)
+                            {
+                                entity = await _unitOfWork.User.AddAsyn(entity);
+                                _unitOfWork.SaveChangesAsync().Wait();
+                                transaction.Commit();
 
-                    //insert recrod to audit trail table after insert user record
-                    AuditTrail.InsertAuditTrail(AuditAction.Add, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                                model.User_ID = entity.User_ID;
+                                model.ResultCode = (int)CustomExceptionEnum.Success;
+                                model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
 
-                    model.User_ID = entity.User_ID;
-                    model.ResultCode = (int)CustomExceptionEnum.Success;
-                    model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
+                                //insert recrod to audit trail table after insert user record
+                                AuditTrail.InsertAuditTrail(AuditAction.Add, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                            }
+                            else
+                            {
+                                throw new CustomException(CustomExceptionEnum.UserEmailAlreadyExists);
+                            }
+                        }
+                        catch (CustomException ex)
+                        {
+                            transaction.Rollback();
+                            model.ResultCode = (int)ex.ResultCode;
+                            model.ResultDescription = ex.ResultDescription;
+                            _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            model.ResultCode = (int)CustomExceptionEnum.UnknownException;
+                            model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
+                            _logger.LogError(ex);
+                        }
+                    }
                 }
-                else
+
+                catch (Exception ex)
                 {
-                    throw new CustomException(CustomExceptionEnum.UserEmailAlreadyExists);
+                    model.ResultCode = (int)CustomExceptionEnum.UnknownException;
+                    model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
+                    _logger.LogError(ex);
                 }
-            }
-            catch (CustomException ex)
-            {
-                model.ResultCode = (int)ex.ResultCode;
-                model.ResultDescription = ex.ResultDescription;
-                _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
             }
             catch (Exception ex)
             {
@@ -106,38 +135,44 @@ namespace POS.Application.Services
                 model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
                 _logger.LogError(ex);
             }
+
             return model;
         }
 
         public async Task<UserModel> GetUserById(int Id)
         {
             var model = new UserModel();
-            var entity = await _grepository.GetAsync(Id);
-            try
+
+            using (var transaction = _unitOfWork.BeginTransaction())
             {
-                if (entity != null)
+                try
                 {
-                    model = _mapper.Map<UserModel>(entity);
-                    model.ResultCode = (int)CustomExceptionEnum.Success;
-                    model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
+                    var entity = await _unitOfWork.User.GetAsync(Id);
+                    if (entity != null)
+                    {
+                        model = _mapper.Map<UserModel>(entity);
+                        model.ResultCode = (int)CustomExceptionEnum.Success;
+                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
+                    }
+                    else
+                    {
+                        throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                    }
                 }
-                else
+                catch (CustomException ex)
                 {
-                    throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                    model.ResultCode = (int)ex.ResultCode;
+                    model.ResultDescription = ex.ResultDescription;
+                    _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
+                }
+                catch (Exception ex)
+                {
+                    model.ResultCode = (int)CustomExceptionEnum.UnknownException;
+                    model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
+                    _logger.LogError(ex);
                 }
             }
-            catch (CustomException ex)
-            {
-                model.ResultCode = (int)ex.ResultCode;
-                model.ResultDescription = ex.ResultDescription;
-                _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
-            }
-            catch (Exception ex)
-            {
-                model.ResultCode = (int)CustomExceptionEnum.UnknownException;
-                model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
-                _logger.LogError(ex);
-            }
+
             return model;
         }
 
@@ -145,40 +180,53 @@ namespace POS.Application.Services
         {
             try
             {
-                var entity = await _grepository.GetAsync(model.User_ID);
-                if (entity != null)
+                using (var transaction = _unitOfWork.BeginTransaction())
                 {
-                    var duplicateEntity = await _grepository.FindAsync(x => x.Email == model.Email && x.User_ID != model.User_ID && x.IsDeleted == false);
-                    if (duplicateEntity == null)
+                    try
                     {
-                        //insert record to audit trail table before user edit record
-                        AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                        var entity = await _unitOfWork.User.GetAsync(model.User_ID);
+                        if (entity != null)
+                        {
+                            var duplicateEntity = await _unitOfWork.User.FindAsync(x => x.Email == model.Email && x.User_ID != model.User_ID && x.IsDeleted == false);
+                            if (duplicateEntity == null)
+                            {
+                                AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
 
-                        entity = _mapper.Map<User>(model);
-                        await _grepository.UpdateAsyn(entity, entity.User_ID);
+                                entity = _mapper.Map<User>(model);
+                                await _unitOfWork.User.UpdateAsyn(entity, entity.User_ID);
+                                transaction.Commit();
 
-                        //insert record to audit trail table after user edit record
-                        AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                                model.ResultCode = (int)CustomExceptionEnum.Success;
+                                model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
 
-                        model.ResultCode = (int)CustomExceptionEnum.Success;
-                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
+                                AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                            }
+                            else
+                            {
+                                throw new CustomException(CustomExceptionEnum.UserEmailAlreadyExists);
+                            }
+                        }
+                        else
+                        {
+                            throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                        }
                     }
-                    else
+                    catch (CustomException ex)
                     {
-                        throw new CustomException(CustomExceptionEnum.UserEmailAlreadyExists);
+                        transaction.Rollback();
+                        model.ResultCode = (int)ex.ResultCode;
+                        model.ResultDescription = ex.ResultDescription;
+                        _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        model.ResultCode = (int)CustomExceptionEnum.UnknownException;
+                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
+                        _logger.LogError(ex);
                     }
                 }
-                else
-                {
-                    throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
-                }
-            }
-            catch (CustomException ex)
-            {
-                model.ResultCode = (int)ex.ResultCode;
-                model.ResultDescription = ex.ResultDescription;
-                _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
-
             }
             catch (Exception ex)
             {
@@ -194,27 +242,45 @@ namespace POS.Application.Services
             var model = new UserModel();
             try
             {
-                var entity = await _grepository.GetAsync(Id);
-                if (entity != null)
+                using (var transaction = _unitOfWork.BeginTransaction())
                 {
-                    entity.IsDeleted = true;
-                    await _grepository.DeleteAsyn(entity);
+                    try
+                    {
+                        var entity = await _unitOfWork.User.GetAsync(Id);
+                        if (entity != null)
+                        {
+                            entity.IsDeleted = true;
+                            _unitOfWork.User.UpdateAsyn(entity, entity.User_ID).Wait();
 
-                    AuditTrail.InsertAuditTrail(AuditAction.Delete, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                            transaction.Commit();
 
-                    model.ResultCode = (int)CustomExceptionEnum.Success;
-                    model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
+                            model.ResultCode = (int)CustomExceptionEnum.Success;
+                            model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
+
+                            AuditTrail.InsertAuditTrail(AuditAction.Delete, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                        }
+                        else
+                        {
+                            throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                        }
+                    }
+                    catch (CustomException ex)
+                    {
+                        transaction.Rollback();
+
+                        model.ResultCode = (int)ex.ResultCode;
+                        model.ResultDescription = ex.ResultDescription;
+                        _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+
+                        model.ResultCode = (int)CustomExceptionEnum.UnknownException;
+                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
+                        _logger.LogError(ex);
+                    }
                 }
-                else
-                {
-                    throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
-                }
-            }
-            catch (CustomException ex)
-            {
-                model.ResultCode = (int)ex.ResultCode;
-                model.ResultDescription = ex.ResultDescription;
-                _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
             }
             catch (Exception ex)
             {
@@ -229,35 +295,49 @@ namespace POS.Application.Services
         {
             try
             {
-                var entity = await _grepository.FindByAsyn(x => x.Email == model.Email && x.Password == model.Password);
-                if (entity != null)
+                using (var transaction = _unitOfWork.BeginTransaction())
                 {
-                    model.ResultCode = (int)CustomExceptionEnum.Success;
-                    model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
-                    // authentication successful so generate jwt token
-                    var tokenHandler = new JwtSecurityTokenHandler();
-                    var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-                    var tokenDescriptor = new SecurityTokenDescriptor
+                    try
                     {
-                        Subject = new ClaimsIdentity(new[] { new Claim("id", model.User_ID.ToString()) }),
-                        Expires = DateTime.UtcNow.AddDays(7), //update later with configurable setting
-                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                    };
-                    var token = tokenHandler.CreateToken(tokenDescriptor);
-                    model.Token = tokenHandler.WriteToken(token);
+                        var entity = await _unitOfWork.User.FindByAsyn(x => x.Email == model.Email && x.Password == model.Password);
+                        if (entity != null)
+                        {                           
+                            // authentication successful so generate jwt token
+                            var tokenHandler = new JwtSecurityTokenHandler();
+                            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                            var tokenDescriptor = new SecurityTokenDescriptor
+                            {
+                                Subject = new ClaimsIdentity(new[] { new Claim("id", model.User_ID.ToString()) }),
+                                Expires = DateTime.UtcNow.AddDays(7), //update later with configurable setting
+                                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                            };
 
-                }
-                else
-                {
-                    throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
-                }
-            }
-            catch (CustomException ex)
-            {
-                model.ResultCode = (int)ex.ResultCode;
-                model.ResultDescription = ex.ResultDescription;
-                _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
-            }
+                            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+                            model.Token = tokenHandler.WriteToken(token);
+                            model.ResultCode = (int)CustomExceptionEnum.Success;
+                            model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
+
+                        }
+                        else
+                        {
+                            throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                        }
+                    }
+                    catch (CustomException ex)
+                    {
+                        model.ResultCode = (int)ex.ResultCode;
+                        model.ResultDescription = ex.ResultDescription;
+                        _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
+                    }
+                    catch (Exception ex)
+                    {
+                        model.ResultCode = (int)CustomExceptionEnum.UnknownException;
+                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
+                        _logger.LogError(ex);
+                    }
+                }                
+            }            
             catch (Exception ex)
             {
                 model.ResultCode = (int)CustomExceptionEnum.UnknownException;

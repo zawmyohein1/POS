@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using POS.API.Helper;
 using POS.Domain.IServices;
 using POS.Domain.ViewModels;
 using POS.Infrastructure.Exceptions.DataAccess;
-using System;
-using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace POS.API.Controllers
 {
@@ -18,7 +16,6 @@ namespace POS.API.Controllers
     public class UsersController : BaseController
     {
         private readonly IUserservice _userService;
-
         public UsersController(IUserservice userService)
         {
             _userService = userService;
@@ -200,7 +197,5 @@ namespace POS.API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message.ToString());
             }
         }
-
-
     }
 }
