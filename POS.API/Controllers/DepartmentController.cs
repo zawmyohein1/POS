@@ -34,8 +34,10 @@ namespace POS.API.Controllers
             {
                 DateTime t1 = DateTime.Now;
                 var departmentModelList = await _departmentService.GetAllDepartments();
+
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
+
                 return Ok(departmentModelList);
             }
             catch (Exception ex)
@@ -60,6 +62,7 @@ namespace POS.API.Controllers
 
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
+
                 return Ok(departmentModel);
 
             }
@@ -84,7 +87,9 @@ namespace POS.API.Controllers
                 DateTime t1 = DateTime.Now;
                 var departmentModel = await _departmentService.CreateDepartment(model);
                 TimeSpan ts = DateTime.Now.Subtract(t1);
+
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
+
                 return CreatedAtAction(nameof(Get), new { id = departmentModel.Department_ID }, departmentModel);
 
             }
@@ -117,6 +122,7 @@ namespace POS.API.Controllers
             try
             {
                 var departmentModel = await _departmentService.UpdateDepartment(model);
+
                 return CreatedAtAction(nameof(Get), new { id = departmentModel.Department_ID }, departmentModel);
             }
             catch (EntityNotFoundException ex)
@@ -137,7 +143,7 @@ namespace POS.API.Controllers
 
         [Authorize]
         [HttpDelete("{id:int:min(1)}/{auditDepartmentName}")]
-        public async Task<ActionResult<DepartmentModel>> Delete(int id, string auditDepartmentName)
+        public async Task<ActionResult<DepartmentModel>> Delete(int id, string name)
         {
             if (id <= 0)
             {
@@ -146,9 +152,11 @@ namespace POS.API.Controllers
             try
             {
                 DateTime t1 = DateTime.Now;
-                var departmentModel = await _departmentService.DeleteDepartment(id, auditDepartmentName);
+                var departmentModel = await _departmentService.DeleteDepartment(id, name);
+
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
+
                 return Ok(departmentModel);
             }
             catch (EntityNotFoundException ex)

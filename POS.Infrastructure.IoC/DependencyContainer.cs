@@ -5,6 +5,7 @@ using POS.Infrastructure.Common.WebApi;
 using POS.Infrastructure.Data.Repository;
 using POS.Infrastructure.Logger;
 using Microsoft.Extensions.DependencyInjection;
+using POS.Infrastructure.Data.UnitOfWork;
 
 namespace POS.Infrastructure.IoC
 {
@@ -18,12 +19,16 @@ namespace POS.Infrastructure.IoC
 
             //POS.Core
             _service.AddScoped<IUserservice, Userservice>();
-            _service.AddScoped<IDepartmentservice, Departmentservice>();
+            _service.AddScoped<IDepartmentservice, DepartmentService>();
 
+            _service.AddTransient<IUnitOfWork, UnitOfWork>();
             //POS.Domain.Interfaces and repositories                
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             _service.AddScoped<IUserRepository, UserRepository>();
-            _service.AddScoped<IDepartmentRepository, DepartmentReposity>();
+            //_service.AddScoped<IDepartmentRepository, DepartmentReposity>();
+
+
+            //_service.AddScoped<IDepartmentRepository2, DepartmentReposity2>();
 
             //POS.Infrasture           
             _service.AddSingleton<ILoggerHelper>(LoggerHelper.Instance);

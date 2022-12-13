@@ -7,8 +7,8 @@ namespace POS.Domain.IServices
     {
         public Task<DepartmentModelList> GetAllDepartments();
         public Task<DepartmentModel> CreateDepartment(DepartmentModel model);
-        public Task<DepartmentModel> GetDepartmentById(int Id);
+        public Task<DepartmentModel> GetDepartmentById(int id);
         public Task<DepartmentModel> UpdateDepartment(DepartmentModel model);
-        public Task<DepartmentModel> DeleteDepartment(int Id, string DepartmentName);
+        public Task<DepartmentModel> DeleteDepartment(int id, string name);
     }
 }
