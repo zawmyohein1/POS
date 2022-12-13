@@ -4,9 +4,6 @@ using POS.Domain.EntityModels;
 using POS.Domain.ViewModels;
 using POS.Infrastructure.Data.Helper;
 using POS.Infrastructure.Logger;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using POS.Infrastructure.Exceptions;
 using AutoMapper;
 
@@ -101,8 +98,6 @@ namespace POS.Application.Services
             {
                 if (entity != null)
                 {
-                    //model = DepartmentConverter.ConvertEntityToModel(entity);
-
                     model = _mapper.Map<DepartmentModel>(entity);
                     model.ResultCode = (int)CustomExceptionEnum.Success;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
@@ -137,8 +132,6 @@ namespace POS.Application.Services
                     var duplicateEntity = await _repository.CheckDuplicate(entity);
                     if (duplicateEntity == null)
                     {
-                        AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.Department, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
-                        //DepartmentConverter.ConvertModelToEntity(model, ref entity);
                         entity = _mapper.Map<Department>(model);
                         await _repository.UpdateDepartmentAsync(entity);
                         AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.Department, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
@@ -204,6 +197,5 @@ namespace POS.Application.Services
             }
             return model;
         }
-
     }
 }

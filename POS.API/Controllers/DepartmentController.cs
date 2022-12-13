@@ -53,11 +53,11 @@ namespace POS.API.Controllers
             {
                 return this.StatusCode(StatusCodes.Status400BadRequest, "Invalid Input");
             }
-
             try
             {
                 DateTime t1 = DateTime.Now;
                 var departmentModel = await _departmentService.GetDepartmentById(id);
+
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
                 return Ok(departmentModel);
@@ -167,7 +167,5 @@ namespace POS.API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, ex.Message.ToString());
             }
         }
-
-
     }
 }
