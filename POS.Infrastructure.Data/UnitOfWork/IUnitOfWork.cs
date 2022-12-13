@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 namespace POS.Infrastructure.Data.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
-    {
-      
-        IDepartmentRepository2 Department { get; }
+    {      
+        IDepartmentRepository Department { get; }
         IDbContextTransaction BeginTransaction();
         Task<IDbContextTransaction> BeginTransactionAsync();
         int Save();

@@ -12,22 +12,20 @@ namespace POS.Infrastructure.Data.UnitOfWork
     {
         private POSDbContext _context;
         private bool _disposed;
-        public IDepartmentRepository2 Department { get; private set; }
-        public UnitOfWork(IDepartmentRepository2 department)
+        public IDepartmentRepository Department { get; private set; }
+        public UnitOfWork(IDepartmentRepository department)
         {
             Department = department;
         }
         public UnitOfWork(POSDbContext context)
         {
             _context = context;
-            Department = new DepartmentReposity2(this._context);
+            Department = new DepartmentReposity(this._context);
         }  
-
         public IDbContextTransaction BeginTransaction()
         {
             return _context.Database.BeginTransaction();
         }
-
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
             return await _context.Database.BeginTransactionAsync();
