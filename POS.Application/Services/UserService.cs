@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
 using AutoMapper;
 using POS.Application.Helper;
-using POS.Domain.IRepositories;
 using POS.Domain.IServices;
 using POS.Domain.EntityModels;
 using POS.Domain.ViewModels;

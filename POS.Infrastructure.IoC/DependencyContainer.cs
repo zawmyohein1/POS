@@ -1,10 +1,11 @@
-﻿using POS.Application.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+using POS.Application.Services;
 using POS.Domain.IRepositories;
 using POS.Domain.IServices;
 using POS.Infrastructure.Common.WebApi;
 using POS.Infrastructure.Logger;
 using POS.Infrastructure.Data.UnitOfWork;
-using System.Net.Http.Headers;
+using POS.Infrastructure.Data.Repository;
 
 namespace POS.Infrastructure.IoC
 {
@@ -33,7 +34,7 @@ namespace POS.Infrastructure.IoC
 
         public static IServiceCollection AddRepositories(IServiceCollection services)
         {
-            _service.AddTransient<IUnitOfWork, UnitOfWork>();
+            _service.AddTransient<IUnitOfWork, UnitOfWork>();  
             return services;
         }
 

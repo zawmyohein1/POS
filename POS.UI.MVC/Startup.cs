@@ -25,9 +25,10 @@ namespace POS.UI.MVC
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            DependencyContainer.UIRegisterServices(services);           
+            DependencyContainer.UIRegisterServices(services);
 
-            services.AddSession(options => {
+            services.AddSession(options =>
+            {
                 options.IdleTimeout = TimeSpan.FromMinutes(1);//You can set Time   
             });
             //services.AddAutoMapper(typeof(Startup));
@@ -63,6 +64,6 @@ namespace POS.UI.MVC
                     name: "default",
                     pattern: "{controller=Users}/{action=Login}/{id?}");
             });
-        }    
+        }
     }
 }
