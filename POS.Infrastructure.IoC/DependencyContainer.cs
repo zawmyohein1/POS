@@ -2,9 +2,7 @@
 using POS.Domain.IRepositories;
 using POS.Domain.IServices;
 using POS.Infrastructure.Common.WebApi;
-using POS.Infrastructure.Data.Repository;
 using POS.Infrastructure.Logger;
-using Microsoft.Extensions.DependencyInjection;
 using POS.Infrastructure.Data.UnitOfWork;
 using System.Net.Http.Headers;
 
@@ -36,9 +34,6 @@ namespace POS.Infrastructure.IoC
         public static IServiceCollection AddRepositories(IServiceCollection services)
         {
             _service.AddTransient<IUnitOfWork, UnitOfWork>();
-            _service.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            _service.AddScoped<IUserRepository, UserRepository>();          
-
             return services;
         }
 
