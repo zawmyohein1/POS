@@ -2,6 +2,7 @@
 using POS.Domain.EntityModels;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using POS.Infrastructure.Data.Configuration;
 
 namespace POS.Infrastructure.Data.Context
 {
@@ -13,6 +14,11 @@ namespace POS.Infrastructure.Data.Context
         public DbSet<Department> Departments { get; set; }
 
         public DbSet<Occupation> Occupations { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+        }
 
     }
 }

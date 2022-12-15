@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace POS.Infrastructure.Data.Migrations
 {
-    public partial class MyFirstMigration : Migration
+    public partial class InitializeDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -79,6 +79,16 @@ namespace POS.Infrastructure.Data.Migrations
                         principalColumn: "Department_ID",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "User_ID", "Created", "Email", "Gender", "IsDeleted", "Password", "Phone", "Role", "User_Name" },
+                values: new object[] { 1, new DateTime(2022, 12, 15, 0, 0, 0, 0, DateTimeKind.Local), "admin@gmail.com", 1, false, "yngWIE500", "9484774", "", "admin" });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "User_ID", "Created", "Email", "Gender", "IsDeleted", "Password", "Phone", "Role", "User_Name" },
+                values: new object[] { 2, new DateTime(2022, 12, 15, 0, 0, 0, 0, DateTimeKind.Local), "user@gmail.com", 1, false, "yngWIE500", "7575664", "", "user" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Occupations_Department_ID",

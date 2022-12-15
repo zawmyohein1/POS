@@ -19,7 +19,7 @@ namespace POS.Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.8");
 
-            modelBuilder.Entity("POS.Domain.Models.Audit_Trail", b =>
+            modelBuilder.Entity("POS.Domain.EntityModels.Audit_Trail", b =>
                 {
                     b.Property<int>("Audit_Trail_ID")
                         .ValueGeneratedOnAdd()
@@ -49,7 +49,7 @@ namespace POS.Infrastructure.Data.Migrations
                     b.ToTable("Audit_Trails");
                 });
 
-            modelBuilder.Entity("POS.Domain.Models.Department", b =>
+            modelBuilder.Entity("POS.Domain.EntityModels.Department", b =>
                 {
                     b.Property<int>("Department_ID")
                         .ValueGeneratedOnAdd()
@@ -73,7 +73,7 @@ namespace POS.Infrastructure.Data.Migrations
                     b.ToTable("Departments");
                 });
 
-            modelBuilder.Entity("POS.Domain.Models.Occupation", b =>
+            modelBuilder.Entity("POS.Domain.EntityModels.Occupation", b =>
                 {
                     b.Property<int>("Occupation_ID")
                         .ValueGeneratedOnAdd()
@@ -98,7 +98,7 @@ namespace POS.Infrastructure.Data.Migrations
                     b.ToTable("Occupations");
                 });
 
-            modelBuilder.Entity("POS.Domain.Models.User", b =>
+            modelBuilder.Entity("POS.Domain.EntityModels.User", b =>
                 {
                     b.Property<int>("User_ID")
                         .ValueGeneratedOnAdd()
@@ -138,11 +138,37 @@ namespace POS.Infrastructure.Data.Migrations
                     b.HasKey("User_ID");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            User_ID = 1,
+                            Created = new DateTime(2022, 12, 15, 0, 0, 0, 0, DateTimeKind.Local),
+                            Email = "admin@gmail.com",
+                            Gender = 1,
+                            IsDeleted = false,
+                            Password = "yngWIE500",
+                            Phone = "9484774",
+                            Role = "",
+                            User_Name = "admin"
+                        },
+                        new
+                        {
+                            User_ID = 2,
+                            Created = new DateTime(2022, 12, 15, 0, 0, 0, 0, DateTimeKind.Local),
+                            Email = "user@gmail.com",
+                            Gender = 1,
+                            IsDeleted = false,
+                            Password = "yngWIE500",
+                            Phone = "7575664",
+                            Role = "",
+                            User_Name = "user"
+                        });
                 });
 
-            modelBuilder.Entity("POS.Domain.Models.Occupation", b =>
+            modelBuilder.Entity("POS.Domain.EntityModels.Occupation", b =>
                 {
-                    b.HasOne("POS.Domain.Models.Department", "Department")
+                    b.HasOne("POS.Domain.EntityModels.Department", "Department")
                         .WithMany("Occupations")
                         .HasForeignKey("Department_ID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -151,7 +177,7 @@ namespace POS.Infrastructure.Data.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("POS.Domain.Models.Department", b =>
+            modelBuilder.Entity("POS.Domain.EntityModels.Department", b =>
                 {
                     b.Navigation("Occupations");
                 });
