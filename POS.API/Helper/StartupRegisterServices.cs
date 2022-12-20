@@ -26,13 +26,13 @@ namespace POS.API.Helper
             {
                 options.UseSqlServer(
                     configuration.GetConnectionString("DefaultConnection"));
-            });
+            }, ServiceLifetime.Transient);
 
             // configure strongly typed settings objects
             var appSetting = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSetting);
 
-            JWTServiceRegister(services,appSetting);
+            JWTServiceRegister(services, appSetting);
 
             services.AddCors(o => o.AddPolicy("DevCorsPolicy", builder =>
             {
@@ -44,7 +44,7 @@ namespace POS.API.Helper
             return services;
         }
 
-        private static IServiceCollection JWTServiceRegister(IServiceCollection services,IConfiguration configuration)
+        private static IServiceCollection JWTServiceRegister(IServiceCollection services, IConfiguration configuration)
         {
             // configure jwt authentication
             var appSettings = configuration.Get<AppSettings>();

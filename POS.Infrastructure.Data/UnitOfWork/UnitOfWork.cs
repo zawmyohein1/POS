@@ -14,12 +14,17 @@ namespace POS.Infrastructure.Data.UnitOfWork
         private bool _disposed;
         public IDepartmentRepository Department { get; private set; }
         public IUserRepository User { get; private set; }
+        public IDbContextTransaction Transaction { get; set; }
 
         public UnitOfWork(POSDbContext context)
         {
+            if (_context != null)
+            {
+                Dispose();
+            }
             _context = context;
             Department = new DepartmentReposity(_context);
-            User = new UserRepository(_context);
+            User = new UserRepository(_context);        
         }
         public IDbContextTransaction BeginTransaction()
         {

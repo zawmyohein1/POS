@@ -2,15 +2,13 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using POS.Domain.IRepositories;
 using POS.Domain.IServices;
 using POS.Domain.EntityModels;
 using POS.Domain.ViewModels;
-using POS.Infrastructure.Data.Helper;
 using POS.Infrastructure.Logger;
 using POS.Infrastructure.Exceptions;
 using POS.Infrastructure.Data.UnitOfWork;
-
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace POS.Application.Services
 {
@@ -19,32 +17,31 @@ namespace POS.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private ILoggerHelper _logger;
         private readonly IMapper _mapper;
-
+        private IDbContextTransaction _transaction;
         public DepartmentService(IUnitOfWork unitOfWork, ILoggerHelper logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
+            _transaction= _unitOfWork.BeginTransaction();
         }
 
         public async Task<DepartmentModelList> GetAllDepartments()
         {
             DepartmentModelList modelList = new DepartmentModelList();
+
             try
             {
-                using (var transaction = _unitOfWork.BeginTransaction())
+                var entityList = await _unitOfWork.Department.FindAllAsync(x => x.IsDeleted == false);
+                if (entityList != null)
                 {
-                    var entityList = await _unitOfWork.Department.FindAllAsync(x => x.IsDeleted == false);
-                    if (entityList != null)
-                    {
-                        modelList.departmentModelList = entityList.Select<Department, DepartmentModel>((DepartmentEntity => { return _mapper.Map<DepartmentModel>(DepartmentEntity); })).ToList();
-                        modelList.ResultCode = (int)CustomExceptionEnum.Success;
-                        modelList.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
-                    }
-                    else
-                    {
-                        throw new CustomException(CustomExceptionEnum.NoDepartmentInfoAvailiable);
-                    }
+                    modelList.departmentModelList = entityList.Select<Department, DepartmentModel>((DepartmentEntity => { return _mapper.Map<DepartmentModel>(DepartmentEntity); })).ToList();
+                    modelList.ResultCode = (int)CustomExceptionEnum.Success;
+                    modelList.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
+                }
+                else
+                {
+                    throw new CustomException(CustomExceptionEnum.NoDepartmentInfoAvailiable);
                 }
             }
             catch (CustomException ex)
@@ -67,38 +64,35 @@ namespace POS.Application.Services
             try
             {
                 var entity = _mapper.Map<Department>(model);
-                using (var transaction = _unitOfWork.BeginTransaction())
+                try
                 {
-                    try
+                    var duplicateEntity = await _unitOfWork.Department.FindAsync(x => x.Department_Name == model.Department_Name && x.Department_ID != model.Department_ID && x.IsDeleted == false);
+                    if (duplicateEntity == null)
                     {
-                        var duplicateEntity = await _unitOfWork.Department.FindAsync(x => x.Department_Name == model.Department_Name && x.Department_ID != model.Department_ID && x.IsDeleted == false);
-                        if (duplicateEntity == null)
-                        {
-                            entity = await _unitOfWork.Department.AddAsyn(entity);
-                            _unitOfWork.SaveChangesAsync().Wait();
-                            transaction.Commit();
+                        entity = await _unitOfWork.Department.AddAsyn(entity);
+                        _unitOfWork.SaveChangesAsync().Wait();
+                        _transaction.Commit();
 
-                            model.Department_ID = entity.Department_ID;
-                            model.ResultCode = (int)CustomExceptionEnum.Success;
-                            model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
-                        }
-                        else
-                        {
-                            throw new CustomException(CustomExceptionEnum.DepartmentNameAlreadyExist);
-                        }
+                        model.Department_ID = entity.Department_ID;
+                        model.ResultCode = (int)CustomExceptionEnum.Success;
+                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                     }
-                    catch (CustomException ex)
+                    else
                     {
-                        model.ResultCode = (int)ex.ResultCode;
-                        model.ResultDescription = ex.ResultDescription;
-                        _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
+                        throw new CustomException(CustomExceptionEnum.DepartmentNameAlreadyExist);
                     }
-                    catch (Exception ex)
-                    {
-                        model.ResultCode = (int)CustomExceptionEnum.UnknownException;
-                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
-                        _logger.LogError(ex);
-                    }
+                }
+                catch (CustomException ex)
+                {
+                    model.ResultCode = (int)ex.ResultCode;
+                    model.ResultDescription = ex.ResultDescription;
+                    _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
+                }
+                catch (Exception ex)
+                {
+                    model.ResultCode = (int)CustomExceptionEnum.UnknownException;
+                    model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
+                    _logger.LogError(ex);
                 }
             }
             catch (Exception ex)
@@ -115,35 +109,31 @@ namespace POS.Application.Services
             var model = new DepartmentModel();
             try
             {
-                using (var tranaction = _unitOfWork.BeginTransaction())
+                var entity = await _unitOfWork.Department.GetAsync(id);
+                try
                 {
-                    var entity = await _unitOfWork.Department.GetAsync(id);
-                    try
+                    if (entity != null)
                     {
-                        if (entity != null)
-                        {
-                            model = _mapper.Map<DepartmentModel>(entity);
-                            model.ResultCode = (int)CustomExceptionEnum.Success;
-                            model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
-                        }
-                        else
-                        {
-                            throw new CustomException(CustomExceptionEnum.NoDepartmentInfoAvailiable);
-                        }
+                        model = _mapper.Map<DepartmentModel>(entity);
+                        model.ResultCode = (int)CustomExceptionEnum.Success;
+                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                     }
-                    catch (CustomException ex)
+                    else
                     {
-                        model.ResultCode = (int)ex.ResultCode;
-                        model.ResultDescription = ex.ResultDescription;
-                        _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
+                        throw new CustomException(CustomExceptionEnum.NoDepartmentInfoAvailiable);
                     }
-                    catch (Exception ex)
-                    {
-                        model.ResultCode = (int)CustomExceptionEnum.UnknownException;
-                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
-
-                        _logger.LogError(ex);
-                    }
+                }
+                catch (CustomException ex)
+                {
+                    model.ResultCode = (int)ex.ResultCode;
+                    model.ResultDescription = ex.ResultDescription;
+                    _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
+                }
+                catch (Exception ex)
+                {
+                    model.ResultCode = (int)CustomExceptionEnum.UnknownException;
+                    model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
+                    _logger.LogError(ex);
                 }
             }
             catch (Exception ex)
@@ -160,50 +150,38 @@ namespace POS.Application.Services
         {
             try
             {
-                using (var transaction = _unitOfWork.BeginTransaction())
+                var entity = await _unitOfWork.Department.GetAsync(model.Department_ID);
+                if (entity != null)
                 {
-                    try
+                    var duplicateEntity = await _unitOfWork.Department.FindAsync(x => x.Department_Name == model.Department_Name && x.Department_ID != model.Department_ID && x.IsDeleted == false);
+                    if (duplicateEntity == null)
                     {
-                        var entity = await _unitOfWork.Department.GetAsync(model.Department_ID);
-                        if (entity != null)
-                        {
-                            var duplicateEntity = await _unitOfWork.Department.FindAsync(x => x.Department_Name == model.Department_Name && x.Department_ID != model.Department_ID && x.IsDeleted == false);
-                            if (duplicateEntity == null)
-                            {
-                                entity = _mapper.Map<Department>(model);
-                                await _unitOfWork.Department.UpdateAsyn(entity, entity.Department_ID);
-                                transaction.Commit();
+                        entity = _mapper.Map<Department>(model);
+                        await _unitOfWork.Department.UpdateAsyn(entity, entity.Department_ID);
+                        _transaction.Commit();
 
-                                model.ResultCode = (int)CustomExceptionEnum.Success;
-                                model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
-                            }
-                            else
-                            {
-                                throw new CustomException(CustomExceptionEnum.DepartmentNameAlreadyExist);
-                            }
-                        }
-                        else
-                        {
-                            throw new CustomException(CustomExceptionEnum.NoDepartmentInfoAvailiable);
-                        }
+                        model.ResultCode = (int)CustomExceptionEnum.Success;
+                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                     }
-                    catch (CustomException ex)
+                    else
                     {
-                        transaction.Rollback();
-                        model.ResultCode = (int)ex.ResultCode;
-                        model.ResultDescription = ex.ResultDescription;
-
-                        _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
+                        throw new CustomException(CustomExceptionEnum.DepartmentNameAlreadyExist);
                     }
                 }
+                else
+                {
+                    throw new CustomException(CustomExceptionEnum.NoDepartmentInfoAvailiable);
+                }
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                model.ResultCode = (int)CustomExceptionEnum.UnknownException;
-                model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
+                _transaction.Rollback();
 
-                _logger.LogError(ex);
+                model.ResultCode = (int)ex.ResultCode;
+                model.ResultDescription = ex.ResultDescription;
+                _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
             }
+
             return model;
         }
 
@@ -212,22 +190,19 @@ namespace POS.Application.Services
             var model = new DepartmentModel();
             try
             {
-                using (var transaction = _unitOfWork.BeginTransaction())
+                var entity = await _unitOfWork.Department.GetAsync(id);
+                if (entity != null)
                 {
-                    var entity = await _unitOfWork.Department.GetAsync(id);
-                    if (entity != null)
-                    {
-                        entity.IsDeleted = true;
-                        _unitOfWork.Department.UpdateAsyn(entity, entity.Department_ID).Wait();
-                        transaction.Commit();
+                    entity.IsDeleted = true;
+                    _unitOfWork.Department.UpdateAsyn(entity, entity.Department_ID).Wait();
+                    _transaction.Commit();
 
-                        model.ResultCode = (int)CustomExceptionEnum.Success;
-                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
-                    }
-                    else
-                    {
-                        throw new CustomException(CustomExceptionEnum.NoDepartmentInfoAvailiable);
-                    }
+                    model.ResultCode = (int)CustomExceptionEnum.Success;
+                    model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
+                }
+                else
+                {
+                    throw new CustomException(CustomExceptionEnum.NoDepartmentInfoAvailiable);
                 }
             }
             catch (CustomException ex)
@@ -242,6 +217,7 @@ namespace POS.Application.Services
                 model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
                 _logger.LogError(ex);
             }
+
             return model;
         }
     }
