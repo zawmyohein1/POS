@@ -1,8 +1,7 @@
-﻿
+﻿@model POS.Domain.ViewModels.DepartmentModel
 <div class="modal fade" id="Custom-myModal">
     <div class="modal-dialog modal-lg">
         <form role="form" class="form-horizontal" method="post" action="/Departments/CreateDepartment" id="form_validation">
-
             @Html.AntiForgeryToken()
             <div class="modal-content ">
                 <div class="modal-header bg-primary">
@@ -11,16 +10,10 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="txtDepartmentName">Name</label>
-                        <input type="text" class="form-control" name="Department_Name" placeholder="Name" id="txtDepartmentName">
-                    </div>
-                    <div class="form-group">
-                        <label for="txtDescription">Description</label>
-                        <input type="text" class="form-control" name="Description" placeholder="Description" id="txtDescription">
-                    </div>
+                    <input-group na-for="@Model.Department_Name"></input-group>
+                    <input-group name="Description"></input-group>
+
                 </div>
 
                 <div class="modal-footer">
@@ -28,7 +21,6 @@
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>
-
         </form>
     </div>
 </div>
@@ -38,7 +30,7 @@
     $(document).ready(function () {
 
         $.validator.setDefaults({
-            submitHandler: function (form) {       
+            submitHandler: function (form) {
                 $(form).ajaxSubmit({
 
                     beforeSubmit: function disableButton(data, form, opts) {
@@ -54,10 +46,11 @@
                     complete: function (xhr) { }
                 });
             }
-        });       
+        });
 
         $('#form_validation').validate({
-            rules: {              
+
+            rules: {
                 Name: {
                     required: true
                 },
@@ -65,14 +58,14 @@
                     required: true
                 },
             },
-            messages: {               
+            messages: {
                 Name: {
                     required: "Please enter a department name",
 
                 },
                 Phone: {
                     required: "Please enter a department description",
-                },              
+                },
             },
             errorElement: 'span',
             errorPlacement: function (error, element) {
@@ -88,14 +81,14 @@
         });
     });
 
-   var successCreate = (data) => {
+    var successCreate = (data) => {
 
         if (data.resultCode == 0) {
             $('#Custom-myModal').modal('hide');
             showDialog("", 'Saved Successfully!', "success", "Departments", "Index", data.id, true, false, null, 0);
         }
         else {
-             showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
+            showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
         }
     }
     var failCreate = data => {
