@@ -7,6 +7,7 @@ namespace POS.Infrastructure.Data.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
+        public IDbContextTransaction Transaction { get; set; }
         IUserRepository User { get; }
         IDepartmentRepository Department { get; }
         IDbContextTransaction BeginTransaction();
