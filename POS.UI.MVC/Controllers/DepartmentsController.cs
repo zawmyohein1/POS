@@ -46,7 +46,7 @@ namespace POS.UI.MVC.Controllers
             DateTime t1 = DateTime.Now;
             TimeSpan ts = DateTime.Now.Subtract(t1);
             _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-            return PartialView("_Create");
+            return PartialView("_Create", new DepartmentModel());
         }
 
         [ValidateAntiForgeryToken]

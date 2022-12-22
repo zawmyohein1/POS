@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="CustomTagHelper\SecureLinkTagHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="wwwroot\bower_components\jquery\.bower.json" />
     <Content Include="wwwroot\bower_components\jquery\AUTHORS.txt" />
     <Content Include="wwwroot\bower_components\jquery\bower.json" />
