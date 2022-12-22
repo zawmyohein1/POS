@@ -1,9 +1,15 @@
-﻿
+﻿@model POS.Domain.ViewModels.UserModel
+
 <div class="modal fade" id="Custom-myModal">
     <div class="modal-dialog modal-lg">
-        <form role="form" class="form-horizontal" method="post" action="/Users/CreateUser" id="form_validation">
+        <form asp-action="CreateUser" asp-asp-controller="Users" asp-antiforgery=true
+              data-ajax-success="successCreate"
+              data-ajax-fail="failCreate"
+              data-ajax="true"
+              data-ajax-method="POST">
 
             @Html.AntiForgeryToken()
+
             <div class="modal-content ">
                 <div class="modal-header bg-primary">
                     <h4 class="modal-title">Add User</h4>
@@ -14,24 +20,29 @@
 
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="txtName">Name</label>
-                        <input type="text" class="form-control" name="User_Name" placeholder="Name" id="txtName">
+                        <label asp-for="User_Name"></label>
+                        <input asp-for="User_Name" class="form-control" />
+                        <span asp-validation-for="User_Name" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="txtEmail">Email</label>
-                        <input type="email" class="form-control" name="Email" placeholder="Email" id="txtEmail">
+                        <label asp-for="Email"></label>
+                        <input type="email" asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="txtPassword">Password</label>
-                        <input type="password" class="form-control" name="Password" placeholder="Password" id="txtPassword">
+                        <label asp-for="Password"></label>
+                        <input type="password" asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="txtPhone">Phone</label>
-                        <input type="text" class="form-control" name="Phone" placeholder="Phone" id="txtPhone">
+                        <label asp-for="Phone"></label>
+                        <input asp-for="Phone" class="form-control" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="txtRole">Role</label>
-                        <input type="text" class="form-control" name="Role" placeholder="Role" id="txtRole">
+                        <label asp-for="Role"></label>
+                        <input asp-for="Role" class="form-control" />
+                        <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -44,98 +55,21 @@
         </form>
     </div>
 </div>
+<partial name="_ValidationScriptsPartial"></partial>
 
 <script type="text/javascript">
 
-    $(document).ready(function () {
-
-        $.validator.setDefaults({
-            submitHandler: function (form) {       
-                $(form).ajaxSubmit({
-
-                    beforeSubmit: function disableButton(data, form, opts) {
-                    },
-                    beforeSend: function (arr, form, options) { },
-                    uploadProgress: function (event, position, total, percentComplete) { },
-                    success: function (data) {
-                        successCreate(data);
-                    },
-                    error: function (xhr) {
-                        console.log(xhr);
-                    },
-                    complete: function (xhr) { }
-                });
-            }
-        });       
-
-        $('#form_validation').validate({
-            rules: {
-                Email: {
-                    required: true,
-                    email: true,
-                },
-                Password: {
-                    required: true,
-                    minlength: 5
-                },
-                Name: {
-                    required: true
-                },
-                Phone: {
-                    required: true
-                },
-
-                Specialist: {
-                    required: true
-                },
-            },
-            messages: {
-                Email: {
-                    required: "Please enter a email address",
-                    email: "Please enter a vaild email address"
-                },
-                Password: {
-                    required: "Please provide a password",
-                    minlength: "Your password must be at least 5 characters long"
-                },
-                Name: {
-                    required: "Please enter a name",
-
-                },
-                Phone: {
-                    required: "Please enter a phone",
-                },
-                Specialist: {
-                    required: "Please enter a specialist",
-
-                },
-            },
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-        });
-    });
-
-   var successCreate = (data) => {
-
+    var successCreate = (data) => {
         if (data.resultCode == 0) {
             $('#Custom-myModal').modal('hide');
             showDialog("", 'Saved Successfully!', "success", "Users", "Index", data.id, true, false, null, 0);
         }
         else {
-             showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
+            showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
         }
     }
-    var failCreate = data => {
 
+    var failCreate = data => {
         showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
     }
 </script>

@@ -21,6 +21,8 @@ namespace POS.Domain.EntityModels
         public string Password { get; set; }
         public string Phone { get; set; }
         public int Gender { get; set; }
+
+        [Required(ErrorMessage = "Role is required")]
         public string Role { get; set; }
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]

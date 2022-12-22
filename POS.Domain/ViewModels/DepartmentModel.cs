@@ -8,7 +8,11 @@ namespace POS.Domain.ViewModels
     public class DepartmentModel : BaseResponse
     {
 
+
         public int Department_ID { get; set; }
+
+        [Display(Name = "Department Name")]
+        [Required(ErrorMessage = "Please enter the Department Name")]
         public string Department_Name { get; set; }
         public string Description { get; set; }
         public bool IsDeleted { get; set; }

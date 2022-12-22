@@ -88,10 +88,6 @@ namespace POS.Application.Services
                         {
                             entity = await _unitOfWork.User.AddAsyn(entity);
                             _unitOfWork.SaveChangesAsync().Wait();
-
-                            var depEntity = await _unitOfWork.Department.AddAsyn(new Department() { Department_Name = null });
-
-
                             _transaction.Commit();
 
                             model.User_ID = entity.User_ID;

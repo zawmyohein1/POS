@@ -23,7 +23,7 @@ namespace POS.UI.MVC.Controllers
         {
             if (HttpContext.Session.GetString("Email") == null)
             {
-                return Redirect("/Account/Login");
+                return Redirect("/Users/Login");
             }
             
             DateTime t1 = DateTime.Now;

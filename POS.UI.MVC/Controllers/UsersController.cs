@@ -187,49 +187,44 @@ namespace POS.UI.MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> Login(UserModel userModel)
         {
-            if (ModelState.IsValid && userModel != null)
+            userModel.User_Name = "default";
+            userModel.Role = "Admin";
+            DateTime t1 = DateTime.Now;
+            var jsonData = JsonConvert.SerializeObject(userModel, Formatting.Indented, new JsonSerializerSettings()
             {
-                DateTime t1 = DateTime.Now;
-                var jsonData = JsonConvert.SerializeObject(userModel, Formatting.Indented, new JsonSerializerSettings()
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+
+            HttpResponseMessage response = await _webApiClient.PostAsync(relativeURI + "/Login", jsonData, null);
+
+            var responseMessage = string.Empty;
+            if (VerifyResponse(response, out responseMessage))
+            {
+                var requestResult = await response.Content.ReadAsStringAsync();
+                userModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
+                if (userModel.ResultCode == 0)
                 {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
+                    HttpContext.Session.SetInt32("UserId", userModel.User_ID);
+                    HttpContext.Session.SetString("Email", userModel.Email);
 
-                HttpResponseMessage response = await _webApiClient.PostAsync(relativeURI + "/Login", jsonData, null);
+                    var menu = "Dashboard";
+                    var actionURL = "Home/Dashboard/";
 
-                var responseMessage = string.Empty;
-                if (VerifyResponse(response, out responseMessage))
-                {
-                    var requestResult = await response.Content.ReadAsStringAsync();
-                    userModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
-                    if (userModel.ResultCode == 0)
-                    {
-                        HttpContext.Session.SetInt32("UserId", userModel.User_ID);
-                        HttpContext.Session.SetString("Email", userModel.Email);
+                    TimeSpan ts = DateTime.Now.Subtract(t1);
+                    _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
 
-                        var menu = "Dashboard";
-                        var actionURL = "Home/Dashboard/";
+                    HttpContext.Session.SetString("Token", userModel.Token);
 
-                        TimeSpan ts = DateTime.Now.Subtract(t1);
-                        _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-
-                        HttpContext.Session.SetString("Token", userModel.Token);
-
-                        return RedirectToAction("Index", "Home", new { menu = menu, actionURL = actionURL });
-                    }
-                    else
-                    {
-                        return View("Login");
-                    }
+                    return RedirectToAction("Index", "Home", new { menu = menu, actionURL = actionURL });
                 }
                 else
                 {
-                    return this.StatusCode((int)response.StatusCode, responseMessage);
+                    return View("Login");
                 }
             }
             else
             {
-                return this.StatusCode(StatusCodes.Status400BadRequest, ErrorKeys.InvalidInput);
+                return this.StatusCode((int)response.StatusCode, responseMessage);
             }
         }
         public ActionResult Logout()

@@ -1,133 +1,72 @@
 ﻿@model POS.Domain.ViewModels.UserModel
+
 <div class="modal fade" id="Custom-myModal">
     <div class="modal-dialog modal-lg">
-        <form role="form" class="form-horizontal" method="post" action="/Users/UpdateUser" id="form_validation">
+        <form asp-action="UpdateUser" asp-controller="Users" asp-antiforgery="true"
+              data-ajax-success="successUpdate"
+              data-ajax-fail="failUpdate"
+              data-ajax="true"
+              data-ajax-method="POST">
 
             @Html.AntiForgeryToken()
-            <div class="modal-content ">
-                <input type="hidden" id="Id" name="User_ID" asp-for="@Model.User_ID" />
-                <div class="modal-header bg-primary">
-                    <h4 class="modal-title">Update User</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
 
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="txtUserName">Name</label>
-                        <input type="text" class="form-control" name="User_Name" placeholder="Name" id="txtUserName" value="@Model.User_Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="txtEmail">Email</label>
-                        <input type="email" class="form-control" name="Email" placeholder="Email" id="txtEmail" value="@Model.Email">
-                    </div>
-                    <div class="form-group">
-                        <label for="txtPassword">Password</label>
-                        <input type="password" class="form-control" name="Password" placeholder="Password" id="txtPassword" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" value="@Model.Password" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="txtPhone">Phone</label>
-                        <input type="text" class="form-control" name="Phone" placeholder="Phone" id="txtPhone" value="@Model.Phone">
-                    </div>
-                    <div class="form-group">
-                        <label for="txtSpecailist">Role</label>
-                        <input type="text" class="form-control" name="Role" placeholder="Role" id="txtRole" value="@Model.Role">
-                    </div>
-                </div>
+            <div class="modal-content ">              
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                <div class="modal-content ">
+                    <div class="modal-header bg-primary">
+                        <h4 class="modal-title">Update User</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <input type="hidden" asp-for="User_ID" />
+
+                        <div class="form-group">
+                            <label asp-for="User_Name"></label>
+                            <input asp-for="User_Name" class="form-control" />
+                            <span asp-validation-for="User_Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email"></label>
+                            <input type="email" asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Password"></label>
+                            <input type="password" asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Phone"></label>
+                            <input asp-for="Phone" class="form-control" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Role"></label>
+                            <input asp-for="Role" class="form-control" />
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
                 </div>
             </div>
 
         </form>
     </div>
 </div>
-<script type="text/javascript">
 
+<partial name="_ValidationScriptsPartial"></partial>
 
-
-    $(document).ready(function () {
-
-        $.validator.setDefaults({
-            submitHandler: function (form) {
-                $(form).ajaxSubmit({
-                    beforeSubmit: function disableButton(data, form, opts) {
-                    },
-                    beforeSend: function (arr, form, options) { },
-                    uploadProgress: function (event, position, total, percentComplete) { },
-                    success: function (data) {
-
-                        successUpdate(data);
-                    },
-                    error: function (xhr) {
-                        failUpdate();
-                    },
-                    complete: function (xhr) { }
-                });
-            }
-        });
-
-        $('#form_validation').validate({
-            rules: {
-                Email: {
-                    required: true,
-                    email: true,
-                },
-                Password: {
-                    required: true,
-                    minlength: 5
-                },
-                Name: {
-                    required: true
-                },
-                Phone: {
-                    required: true
-                },
-
-                Specialist: {
-                    required: true
-                },
-            },
-            messages: {
-                Email: {
-                    required: "Please enter a email address",
-                    email: "Please enter a vaild email address"
-                },
-                Password: {
-                    required: "Please provide a password",
-                    minlength: "Your password must be at least 5 characters long"
-                },
-                Name: {
-                    required: "Please enter a name",
-
-                },
-                Phone: {
-                    required: "Please enter a phone",
-                },
-                Specialist: {
-                    required: "Please enter a specialist",
-
-                },
-            },
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-        });
-    });
+<script type="text/javascript">  
 
     var successUpdate = (data) => {
-
         if (data.resultCode == 0) {
             $('#Custom-myModal').modal('hide');
             showDialog("", 'Updated Successfully!', "success", "Users", "Index", data.id, true, false, null, 0);
@@ -136,8 +75,8 @@
             showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
         }
     }
-    var failUpdate = data => {
 
+    var failUpdate = data => {
         showDialog('SomethingWentWrong', 'Error', "error", "", "", 0, false, false, null, 0);
     }
 </script>

@@ -1,11 +1,16 @@
 ﻿@model POS.Domain.ViewModels.DepartmentModel
+
 <div class="modal fade" id="Custom-myModal">
-    <div class="modal-dialog modal-lg">
-        <form role="form" class="form-horizontal" method="post" action="/Departments/UpdateDepartment" id="form_validation">
+    <div class="modal-dialog modal-md">
+        <form asp-action="UpdateDepartment" asp-controller="Departments" asp-antiforgery="true"
+              data-ajax-success="successUpdate"
+              data-ajax-fail="failUpdate"
+              data-ajax="true"
+              data-ajax-method="post">
 
             @Html.AntiForgeryToken()
-            <div class="modal-content ">
-                <input type="hidden" id="Department_ID" name="Department_ID" asp-for="@Model.Department_ID" />
+
+            <div class="modal-content ">               
                 <div class="modal-header bg-primary">
                     <h4 class="modal-title">Update Department</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -13,14 +18,17 @@
                     </button>
                 </div>
 
+                <input type="hidden" asp-for="Department_ID" />
+
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="txtDeartmentName">Name</label>
-                        <input type="text" class="form-control" name="Department_Name" placeholder="Name" id="txtDeartmentName" value="@Model.Department_Name">
+                        <label asp-for="Department_Name"></label>
+                        <input asp-for="Department_Name" class="form-control" />
+                        <span asp-validation-for="Department_Name" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="txtDescription">Description</label>
-                        <input type="text" class="form-control" name="Description" placeholder="Description" id="txtDescription" value="@Model.Description">
+                        <label asp-for="Description"></label>
+                        <input asp-for="Description" class="form-control" />
                     </div>
                 </div>
 
@@ -33,62 +41,9 @@
         </form>
     </div>
 </div>
+<partial name="_ValidationScriptsPartial"></partial>
+
 <script type="text/javascript">
-
-
-
-    $(document).ready(function () {
-
-        $.validator.setDefaults({
-            submitHandler: function (form) {
-                $(form).ajaxSubmit({
-                    beforeSubmit: function disableButton(data, form, opts) {
-                    },
-                    beforeSend: function (arr, form, options) { },
-                    uploadProgress: function (event, position, total, percentComplete) { },
-                    success: function (data) {
-
-                        successUpdate(data);
-                    },
-                    error: function (xhr) {
-                        failUpdate();
-                    },
-                    complete: function (xhr) { }
-                });
-            }
-        });
-
-        $('#form_validation').validate({
-            rules: {
-                Name: {
-                    required: true
-                },
-                Description: {
-                    required: true
-                },
-            },
-            messages: {
-                Name: {
-                    required: "Please enter a department name",
-
-                },
-                Phone: {
-                    required: "Please enter a department description",
-                },
-            },
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-        });
-    });
 
     var successUpdate = (data) => {
 
@@ -100,8 +55,10 @@
             showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
         }
     }
+
     var failUpdate = data => {
 
         showDialog('SomethingWentWrong', 'Error', "error", "", "", 0, false, false, null, 0);
     }
+
 </script>

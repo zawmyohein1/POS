@@ -69,6 +69,7 @@ namespace POS.UI.MVC.Controllers
                     DepartmentModel = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
+                    
                     return await Task.FromResult<ActionResult>(Json(DepartmentModel));
                 }
                 else
@@ -78,7 +79,7 @@ namespace POS.UI.MVC.Controllers
             }
             else
             {
-                return this.StatusCode(StatusCodes.Status400BadRequest, ErrorKeys.InvalidInput);
+                return PartialView("_Create", DepartmentModel);
             }
         }
 
@@ -133,6 +134,7 @@ namespace POS.UI.MVC.Controllers
                     DepartmentModel = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
+                    
                     return await Task.FromResult<ActionResult>(Json(DepartmentModel));
                 }
                 else
