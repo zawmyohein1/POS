@@ -11,6 +11,7 @@ namespace POS.Domain.ViewModels
 
         [Required(ErrorMessage = "User Name is requrired")]
         [StringLength(50)]
+        [Display(Name = "User Name")]
         public string User_Name { get; set; }
 
         [Required(ErrorMessage = "Email is required")]

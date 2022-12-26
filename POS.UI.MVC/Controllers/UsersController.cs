@@ -57,7 +57,7 @@ namespace POS.UI.MVC.Controllers
                 DateTime t1 = DateTime.Now;
                 var jsonData = JsonConvert.SerializeObject(userModel, Formatting.Indented, new JsonSerializerSettings()
                 {
-                    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
                 HttpResponseMessage response = await _webApiClient.PostAsync(relativeURI, jsonData, token);
 
@@ -227,6 +227,7 @@ namespace POS.UI.MVC.Controllers
                 return this.StatusCode((int)response.StatusCode, responseMessage);
             }
         }
+
         public ActionResult Logout()
         {
             DateTime t1 = DateTime.Now;

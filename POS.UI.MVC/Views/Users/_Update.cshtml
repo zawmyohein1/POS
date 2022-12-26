@@ -2,71 +2,65 @@
 
 <div class="modal fade" id="Custom-myModal">
     <div class="modal-dialog modal-lg">
-        <form asp-action="UpdateUser" asp-controller="Users" asp-antiforgery="true"
-              data-ajax-success="successUpdate"
-              data-ajax-fail="failUpdate"
-              data-ajax="true"
-              data-ajax-method="POST">
 
-            @Html.AntiForgeryToken()
 
-            <div class="modal-content ">              
+        <div class="modal-content ">
+            <form asp-action="UpdateUser" asp-controller="Users" asp-antiforgery="true"
+                  data-ajax-success="successUpdate"
+                  data-ajax-fail="failUpdate"
+                  data-ajax="true"
+                  data-ajax-method="POST">
+                @Html.AntiForgeryToken()
 
-                <div class="modal-content ">
-                    <div class="modal-header bg-primary">
-                        <h4 class="modal-title">Update User</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                <div class="modal-header bg-primary">
+                    <h4 class="modal-title">Update User</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" asp-for="User_ID" />
+                    <div class="form-group">
+                        <label asp-for="User_Name"></label>
+                        <input asp-for="User_Name" class="form-control" />
+                        <span asp-validation-for="User_Name" class="text-danger"></span>
                     </div>
-
-                    <div class="modal-body">
-
-                        <input type="hidden" asp-for="User_ID" />
-
-                        <div class="form-group">
-                            <label asp-for="User_Name"></label>
-                            <input asp-for="User_Name" class="form-control" />
-                            <span asp-validation-for="User_Name" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="Email"></label>
-                            <input type="email" asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="Password"></label>
-                            <input type="password" asp-for="Password" class="form-control" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="Phone"></label>
-                            <input asp-for="Phone" class="form-control" />
-                            <span asp-validation-for="Phone" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="Role"></label>
-                            <input asp-for="Role" class="form-control" />
-                            <span asp-validation-for="Role" class="text-danger"></span>
-                        </div>
+                    <div class="form-group">
+                        <label asp-for="Email"></label>
+                        <input type="email" asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                    <div class="form-group">
+                        <label asp-for="Password"></label>
+                        <input type="password" asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Phone"></label>
+                        <input asp-for="Phone" class="form-control" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Role"></label>
+                        <input asp-for="Role" class="form-control" />
+                        <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
                 </div>
-            </div>
-
-        </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <partial name="_ValidationScriptsPartial"></partial>
 
-<script type="text/javascript">  
+<script type="text/javascript">
 
     var successUpdate = (data) => {
+
         if (data.resultCode == 0) {
             $('#Custom-myModal').modal('hide');
             showDialog("", 'Updated Successfully!', "success", "Users", "Index", data.id, true, false, null, 0);
@@ -77,6 +71,7 @@
     }
 
     var failUpdate = data => {
+
         showDialog('SomethingWentWrong', 'Error', "error", "", "", 0, false, false, null, 0);
     }
 </script>

@@ -2,17 +2,18 @@
 
 <div class="modal fade" id="Custom-myModal">
     <div class="modal-dialog modal-lg">
-        <form asp-action="CreateUser" asp-asp-controller="Users" asp-antiforgery=true
-              data-ajax-success="successCreate"
-              data-ajax-fail="failCreate"
-              data-ajax="true"
-              data-ajax-method="POST">
 
-            @Html.AntiForgeryToken()
+        <div class="modal-content ">
+            <form asp-action="CreateUser" asp-asp-controller="Users" asp-antiforgery=true
+                  data-ajax-success="successCreate"
+                  data-ajax-fail="failCreate"
+                  data-ajax="true"
+                  data-ajax-method="POST">
 
-            <div class="modal-content ">
+                @Html.AntiForgeryToken()
+
                 <div class="modal-header bg-primary">
-                    <h4 class="modal-title">Add User</h4>
+                    <h3 class="modal-title">Add User</h3>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -50,11 +51,11 @@
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
-            </div>
-
-        </form>
+            </form>
+        </div>
     </div>
 </div>
+
 <partial name="_ValidationScriptsPartial"></partial>
 
 <script type="text/javascript">

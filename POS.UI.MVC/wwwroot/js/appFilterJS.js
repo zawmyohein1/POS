@@ -2,11 +2,13 @@
 var appFilter = {
     /*** Get Application URL **/
     getApplicaitonURL: function () {
+     
         var url = window.location.href;
         var urlArr = url.split('/');
         var urlPath = '';
         var data = '';
-        for (i = 0; i < urlArr.length - 2; i++) {
+        var toCount = urlArr.length > 5 ? 5 : urlArr.length;
+        for (i = 0; i < toCount - 2; i++) {
             urlPath += urlArr[i] + "/";
         }
         return urlPath;
@@ -43,7 +45,6 @@ var appFilter = {
         if (!isDeleted) {
             $('.page-loader-wrapper').fadeIn();
         }
-
         var loadTime = Date.now();
 
         $.ajax({
@@ -53,7 +54,7 @@ var appFilter = {
             /*  data: dataPass,*/
             traditional: true,
             success: function (data) {
-                console.log('renderPartialViewMasterUI' + data);
+            
                 $("#PartialView").html("");
                 $("#PartialView").html(data);
 
@@ -96,7 +97,6 @@ var appFilter = {
                                 $('#' + selected_Table.rows('.selected').data()[0].DT_RowId).click();
                             }
                         }
-
                     }
                     //end of keep datatable as previous state
                 }
@@ -109,17 +109,13 @@ var appFilter = {
         });
     },
 
-    routeLandingPage: function (landingPage, landingURL) {
-
+    routeLandingPage: function (landingPage, landingURL) { 
+        
         $('#ulLeftSideMenu P:contains("' + landingPage + '")').parent().addClass('active');
-        //check for parent menu button     
-
         var controllerName = landingURL.split('/')[1];
         var path = appFilter.getApplicaitonURL();
         var relativeURL = path + landingURL;
         appFilter.renderPartialViewMasterUI(relativeURL, controllerName, 0, false);
     }
-
-
 }
 

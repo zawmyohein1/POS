@@ -3,15 +3,18 @@
     ViewBag.Title = "Home Page";
 }
 @section scriptslanding
-{
+    {
     <script>
         var loadTime = Date.now();
 
-     
+
         $(function () {
+
             var relativeURI = '@ViewBag.actionURL';
             var menu = '@ViewBag.menu';
-         
+
+            console.log('menu : ' + menu + "action URL : " + relativeURI)
+
             appFilter.routeLandingPage(menu, relativeURI);
 
             admin.loadTimeLog(loadTime, 'HomePage dom ready');
