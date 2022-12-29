@@ -51,12 +51,12 @@ namespace POS.UI.MVC.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<ActionResult> CreateDepartmentAsync(DepartmentModel DepartmentModel)
+        public async Task<ActionResult> CreateDepartmentAsync(DepartmentModel model)
         {
-            if (ModelState.IsValid && DepartmentModel != null)
+            if (ModelState.IsValid && model != null)
             {
                 DateTime t1 = DateTime.Now;
-                var jsonData = JsonConvert.SerializeObject(DepartmentModel, Formatting.Indented, new JsonSerializerSettings()
+                var jsonData = JsonConvert.SerializeObject(model, Formatting.Indented, new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 });
@@ -66,11 +66,12 @@ namespace POS.UI.MVC.Controllers
                 if (VerifyResponse(response, out responseMessage))
                 {
                     var requestResult = await response.Content.ReadAsStringAsync();
-                    DepartmentModel = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
+                    model = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                    
-                    return await Task.FromResult<ActionResult>(Json(DepartmentModel));
+                    model.Controller = "Departments";
+                    model.Action = "Index";                    
+                    return await Task.FromResult<ActionResult>(Json(model));
                 }
                 else
                 {
@@ -79,7 +80,7 @@ namespace POS.UI.MVC.Controllers
             }
             else
             {
-                return PartialView("_Create", DepartmentModel);
+                return PartialView("_Create", model);
             }
         }
 

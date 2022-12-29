@@ -4,8 +4,8 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content ">
             <form asp-action="CreateDepartment" role="form" asp-controller="Departments" asp-antiforgery=true
-                  data-ajax-success="successCreate"
-                  data-ajax-Fail="failCreate"
+                  data-ajax-success="success"
+                  data-ajax-Fail="fail"
                   data-ajax="true"
                   data-ajax-method="POST">
 
@@ -37,21 +37,4 @@
 </div>
 
 <partial name="_ValidationScriptsPartial"></partial>
-
-<script type="text/javascript">
-
-    var successCreate = (data) => {
-
-        if (data.resultCode == 0) {
-            $('#Custom-myModal').modal('hide');
-            showDialog("", 'Saved Successfully!', "success", "Departments", "Index", data.id, true, false, null, 0);
-        }
-        else {
-            showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
-        }
-    }
-    var failCreate = data => {
-
-        showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
-    }
-</script>
+<partial name="_DialogScriptsPartial"></partial>

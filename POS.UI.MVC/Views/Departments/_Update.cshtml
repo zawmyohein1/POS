@@ -4,8 +4,8 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content ">
             <form asp-action="UpdateDepartment" asp-controller="Departments" asp-antiforgery="true"
-                  data-ajax-success="successUpdate"
-                  data-ajax-fail="failUpdate"
+                  data-ajax-success="success"
+                  data-ajax-fail="fail"
                   data-ajax="true"
                   data-ajax-method="post">
 
@@ -37,23 +37,4 @@
     </div>
 </div>
 <partial name="_ValidationScriptsPartial"></partial>
-
-<script type="text/javascript">
-
-    var successUpdate = (data) => {
-
-        if (data.resultCode == 0) {
-            $('#Custom-myModal').modal('hide');
-            showDialog("", 'Updated Successfully!', "success", "Departments", "Index", data.id, true, false, null, 0);
-        }
-        else {
-            showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
-        }
-    }
-
-    var failUpdate = data => {
-
-        showDialog('SomethingWentWrong', 'Error', "error", "", "", 0, false, false, null, 0);
-    }
-
-</script>
+<partial name="_DialogScriptsPartial"></partial>

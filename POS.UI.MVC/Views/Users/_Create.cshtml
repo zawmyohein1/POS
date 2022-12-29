@@ -57,20 +57,4 @@
 </div>
 
 <partial name="_ValidationScriptsPartial"></partial>
-
-<script type="text/javascript">
-
-    var successCreate = (data) => {
-        if (data.resultCode == 0) {
-            $('#Custom-myModal').modal('hide');
-            showDialog("", 'Saved Successfully!', "success", "Users", "Index", data.id, true, false, null, 0);
-        }
-        else {
-            showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
-        }
-    }
-
-    var failCreate = data => {
-        showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
-    }
-</script>
+<partial name="_DialogScriptsPartial"></partial>
