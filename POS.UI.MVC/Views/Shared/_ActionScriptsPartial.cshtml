@@ -1,0 +1,52 @@
+﻿<script type="text/javascript">
+
+    var action='@ViewData["Action"]';
+    var controller='@ViewData["Controller"]';
+
+
+    $(document).ready(function () {
+
+        $('#btnAddNew').click(function () {
+           debugger;
+            var relativeURI='@Url.Action("Create","Departments")';
+             renderPPPartialView(relativeURI);
+        });
+
+        $('.customTbl').on('click', '.lnkEdit', function () {
+              var _id = $(this).attr('data-para');
+               if (_id > 0) {
+                    var relativeURI = "";
+                    var relativeURI = '@Url.Action("Update", "Departments")?id=' + _id;
+                   renderPPPartialView(relativeURI);
+                }
+        });
+
+        $('.customTbl').on('click', '.lnkDelete', function () {
+
+            var tdCount = $('tbody tr').length;
+            if (tdCount > 1) {
+                var _id = $(this).attr('data-para');
+                deleteDialog("Departments", "Delete", ["id"], [_id], "Departments", 0, 'Index');
+            }
+            else {
+                 showDialog('Cannot Delete This Record', 'AtLeast One Record Must Be Remained', "error", "", "", 0, false, false);
+            }
+        });
+     });
+
+    //script with partial render
+    function renderPPPartialView(relativeURI) {
+        $.ajax({
+            url: relativeURI,
+            type: "Get",
+            cache: false,
+            success: function (data) {
+                $("#ppcreate").html("");
+                $("#ppcreate").html(data);
+                //custom showing popup
+                $('#Custom-myModal').modal('show');
+            }
+        });
+    }
+
+</script>

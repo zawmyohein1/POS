@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EvaSign.Common
+namespace POS.Common
 {
     public class ErrorKeys
     {
@@ -20,7 +20,7 @@ namespace EvaSign.Common
         public const string PrinterNotAssigned = "PrinterNotAssigned";
         public const string DisplayNotMapped = "DisplayNotMapped";
         public const string ServiceConflictForPrintTicket = "ServiceConflictForPrintTicket";
-        
+
     }
     public class MediaTypeFormats
     {
@@ -35,5 +35,19 @@ namespace EvaSign.Common
     {
         public const string contoller = "users";
         public const string action = "login";
+    }
+
+    public class Controllers
+    {
+        public const string Departments = "Departments";
+        public const string Users = "Users";
+    }
+
+    public class Actions
+    {
+        public const string Index = "Index";
+        public const string Create = "Create";
+        public const string Update = "Update";
+        public const string Delete = "Delete";
     }
 }

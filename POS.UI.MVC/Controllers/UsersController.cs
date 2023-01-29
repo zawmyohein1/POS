@@ -1,4 +1,5 @@
-﻿//using POS.Domain.ViewModels;
+﻿
+//using POS.Domain.ViewModels;
 using POS.Domain.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using EvaSign.Common;
+using POS.Common;
 
 namespace POS.UI.MVC.Controllers
 {
@@ -45,6 +46,7 @@ namespace POS.UI.MVC.Controllers
             DateTime t1 = DateTime.Now;
             TimeSpan ts = DateTime.Now.Subtract(t1);
             _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
+            ViewData["Title"] = "Add User";
             return PartialView("_Create");
         }
 
@@ -98,6 +100,7 @@ namespace POS.UI.MVC.Controllers
                     userModel = JsonConvert.DeserializeObject<UserModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
+                    ViewData["Title"] = "Add User";
                     return PartialView("_Update", userModel);
                 }
                 else

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using EvaSign.Common;
+using POS.Common;
 
 namespace POS.UI.MVC.Controllers
 {
@@ -58,7 +58,7 @@ namespace POS.UI.MVC.Controllers
                 DateTime t1 = DateTime.Now;
                 var jsonData = JsonConvert.SerializeObject(model, Formatting.Indented, new JsonSerializerSettings()
                 {
-                    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
                 HttpResponseMessage response = await _webApiClient.PostAsync(relativeURI, jsonData, token);
 
@@ -68,9 +68,7 @@ namespace POS.UI.MVC.Controllers
                     var requestResult = await response.Content.ReadAsStringAsync();
                     model = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
                     TimeSpan ts = DateTime.Now.Subtract(t1);
-                    _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
-                    model.Controller = "Departments";
-                    model.Action = "Index";                    
+                    _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));                          
                     return await Task.FromResult<ActionResult>(Json(model));
                 }
                 else

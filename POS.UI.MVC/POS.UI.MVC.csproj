@@ -224,12 +224,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="CustomTagHelper\MyPartialHelper.cs" />
     <Compile Remove="CustomTagHelper\SecureLinkTagHelper.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
+    <Content Remove="appsettings.json" />
+    <Content Remove="appsettings.Production.json" />
     <Content Remove="wwwroot\css\main.css" />
     <Content Remove="wwwroot\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Views\Users\cqxqtcvl.ncx~" />
   </ItemGroup>
 
   <ItemGroup>
@@ -255,5 +263,7 @@
     <ProjectReference Include="..\POS.Infrastructure.IoC\POS.Infrastructure.IoC.csproj" />
     <ProjectReference Include="..\POS.Infrastructure.Logger\POS.Infrastructure.Logger.csproj" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

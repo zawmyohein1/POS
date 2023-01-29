@@ -2,22 +2,16 @@
 
 <div class="modal fade" id="Custom-myModal">
     <div class="modal-dialog modal-lg">
-
-
         <div class="modal-content ">
             <form asp-action="UpdateUser" asp-controller="Users" asp-antiforgery="true"
-                  data-ajax-success="successUpdate"
-                  data-ajax-fail="failUpdate"
+                  data-ajax-success="success"
+                  data-ajax-fail="fail"
                   data-ajax="true"
                   data-ajax-method="POST">
+
                 @Html.AntiForgeryToken()
 
-                <div class="modal-header bg-primary">
-                    <h4 class="modal-title">Update User</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+                <partial name="_ModalHeader" view-data="ViewData" />
                 <div class="modal-body">
                     <input type="hidden" asp-for="User_ID" />
                     <div class="form-group">
@@ -46,32 +40,11 @@
                         <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </div>
+                <partial name="_ModalFooter" />
             </form>
         </div>
     </div>
 </div>
 
 <partial name="_ValidationScriptsPartial"></partial>
-
-<script type="text/javascript">
-
-    var successUpdate = (data) => {
-
-        if (data.resultCode == 0) {
-            $('#Custom-myModal').modal('hide');
-            showDialog("", 'Updated Successfully!', "success", "Users", "Index", data.id, true, false, null, 0);
-        }
-        else {
-            showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
-        }
-    }
-
-    var failUpdate = data => {
-
-        showDialog('SomethingWentWrong', 'Error', "error", "", "", 0, false, false, null, 0);
-    }
-</script>
+<partial name="_DialogScriptsPartial"></partial>

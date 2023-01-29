@@ -7,7 +7,7 @@ using POS.Infrastructure.IoC;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Http;
-using EvaSign.Common;
+using POS.Common;
 
 namespace POS.UI.MVC.Controllers
 {
@@ -126,7 +126,6 @@ namespace POS.UI.MVC.Controllers
                 else
                     context.Result = new BadRequestObjectResult("Invalid!");
             }
-
         }
 
         private bool checkSessionBarer()
