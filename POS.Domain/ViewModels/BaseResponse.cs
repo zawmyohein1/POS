@@ -6,6 +6,7 @@
         public string ResultDescription { get; set; }
         public string Action { get; set; }
         public string Controller { get; set; }
+        public int ID { get; set; }
 
     }
 }

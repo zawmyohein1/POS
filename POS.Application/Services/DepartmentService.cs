@@ -17,13 +17,11 @@ namespace POS.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private ILoggerHelper _logger;
         private readonly IMapper _mapper;
-        private IDbContextTransaction _transaction;
         public DepartmentService(IUnitOfWork unitOfWork, ILoggerHelper logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _transaction= _unitOfWork.BeginTransaction();
         }
 
         public async Task<DepartmentModelList> GetAllDepartments()
@@ -32,10 +30,12 @@ namespace POS.Application.Services
 
             try
             {
+                _unitOfWork.StartTransaction();
+
                 var entityList = await _unitOfWork.Department.FindAllAsync(x => x.IsDeleted == false);
                 if (entityList != null)
                 {
-                    modelList.departmentModelList = entityList.Select<Department, DepartmentModel>((DepartmentEntity => { return _mapper.Map<DepartmentModel>(DepartmentEntity); })).ToList();
+                    modelList.departmentModelList = entityList.Select((DepartmentEntity => { return _mapper.Map<DepartmentModel>(DepartmentEntity); })).ToList();
                     modelList.ResultCode = (int)CustomExceptionEnum.Success;
                     modelList.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                 }
@@ -66,12 +66,14 @@ namespace POS.Application.Services
                 var entity = _mapper.Map<Department>(model);
                 try
                 {
+                    _unitOfWork.StartTransaction();
+
                     var duplicateEntity = await _unitOfWork.Department.FindAsync(x => x.Department_Name == model.Department_Name && x.Department_ID != model.Department_ID && x.IsDeleted == false);
                     if (duplicateEntity == null)
                     {
                         entity = await _unitOfWork.Department.AddAsyn(entity);
-                        _unitOfWork.SaveChangesAsync().Wait();
-                        _transaction.Commit();
+                        _unitOfWork.SaveChanges();
+                        _unitOfWork.Commit();
 
                         model.Department_ID = entity.Department_ID;
                         model.ResultCode = (int)CustomExceptionEnum.Success;
@@ -109,6 +111,8 @@ namespace POS.Application.Services
             var model = new DepartmentModel();
             try
             {
+                _unitOfWork.StartTransaction();
+
                 var entity = await _unitOfWork.Department.GetAsync(id);
                 try
                 {
@@ -150,6 +154,8 @@ namespace POS.Application.Services
         {
             try
             {
+                _unitOfWork.StartTransaction();
+
                 var entity = await _unitOfWork.Department.GetAsync(model.Department_ID);
                 if (entity != null)
                 {
@@ -158,7 +164,7 @@ namespace POS.Application.Services
                     {
                         entity = _mapper.Map<Department>(model);
                         await _unitOfWork.Department.UpdateAsyn(entity, entity.Department_ID);
-                        _transaction.Commit();
+                        _unitOfWork.Commit();
 
                         model.ResultCode = (int)CustomExceptionEnum.Success;
                         model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
@@ -175,7 +181,7 @@ namespace POS.Application.Services
             }
             catch (CustomException ex)
             {
-                _transaction.Rollback();
+                _unitOfWork.Rollback();
 
                 model.ResultCode = (int)ex.ResultCode;
                 model.ResultDescription = ex.ResultDescription;
@@ -190,12 +196,13 @@ namespace POS.Application.Services
             var model = new DepartmentModel();
             try
             {
+                _unitOfWork.StartTransaction();
                 var entity = await _unitOfWork.Department.GetAsync(id);
                 if (entity != null)
                 {
                     entity.IsDeleted = true;
                     _unitOfWork.Department.UpdateAsyn(entity, entity.Department_ID).Wait();
-                    _transaction.Commit();
+                    _unitOfWork.Commit();
 
                     model.ResultCode = (int)CustomExceptionEnum.Success;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);

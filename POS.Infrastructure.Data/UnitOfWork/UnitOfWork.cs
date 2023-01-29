@@ -3,60 +3,72 @@ using POS.Domain.IRepositories;
 using POS.Infrastructure.Data.Context;
 using POS.Infrastructure.Data.Repository;
 using System;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace POS.Infrastructure.Data.UnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private POSDbContext _context;
-        private bool _disposed;
-        public IDepartmentRepository Department { get; private set; }
-        public IUserRepository User { get; private set; }
-        public IDbContextTransaction Transaction { get; set; }
+        private readonly POSDbContext _context;     
+
+        private IDepartmentRepository _department;
+        private IUserRepository _user;
+        private IDbContextTransaction _transaction;
 
         public UnitOfWork(POSDbContext context)
         {
-            if (_context != null)
-            {
-                Dispose();
-            }
             _context = context;
-            Department = new DepartmentReposity(_context);
-            User = new UserRepository(_context);        
         }
-        public IDbContextTransaction BeginTransaction()
+        public IDepartmentRepository Department
         {
-            return _context.Database.BeginTransaction();
-        }
-        public async Task<IDbContextTransaction> BeginTransactionAsync()
-        {
-            return await _context.Database.BeginTransactionAsync();
-        }
-        public void Dispose(bool disposing)
-        {
-            if (!this._disposed)
+            get
             {
-                if (disposing)
+                if (_department == null)
                 {
-                    _context.Dispose();
+                    _department = new DepartmentReposity(_context);
                 }
+                return _department;
             }
-            this._disposed = true;
         }
+        public IUserRepository User
+        {
+            get
+            {
+                if (_user == null)
+                {
+                    _user = new UserRepository(_context);
+                }
+                return _user;
+            }
+        }
+        public void StartTransaction()
+        {
+            _transaction = _context.Database.BeginTransaction();
+        }
+
+
+        public void Commit()
+        {
+            _transaction.Commit();
+        }
+
+        public void Rollback()
+        {
+            _transaction.Rollback();
+        }
+
+        public void SaveChanges()
+        {
+            _context.SaveChanges();
+        }
+
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        public int Save()
-        {
-            return _context.SaveChanges();
-        }
-        public async Task<int> SaveChangesAsync()
-        {
-            return await _context.SaveChangesAsync();
+            if (_transaction != null)
+            {
+                _transaction.Dispose();
+            }
+
+            _context.Dispose();
         }
     }
 }

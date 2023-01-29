@@ -4,7 +4,7 @@
 <div class="modal fade" id="Custom-myModal">
     <div class="modal-dialog modal-md">
         <div class="modal-content ">
-            <form asp-action="CreateDepartment" role="form" asp-controller="Departments" asp-antiforgery=true
+            <form asp-action="CreateDepartment" id="frmCreate" role="form" asp-controller="Departments" asp-antiforgery=true
                   data-ajax-success="success"
                   data-ajax-Fail="fail"
                   data-ajax="true"
@@ -13,7 +13,6 @@
                 @Html.AntiForgeryToken()
 
                 <partial name="_ModalHeader" view-data="ViewData" />
-
                 <div class="modal-body">
                     <div class="form-group">
                         <label asp-for="Department_Name"></label>
@@ -25,13 +24,44 @@
                         <input asp-for="Description" class="form-control" />
                     </div>
                 </div>
-                <partial name="_ModalFooter" />
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
             </form>
-
-
         </div>
     </div>
 </div>
 
-<partial name="_ValidationScriptsPartial"></partial>
-<partial name="_DialogScriptsPartial"></partial>
+@*<script src="~/plugins/jquery-validation/jquery.validate.js"></script>
+
+<script src="~/plugins/jquery-validation/additional-methods.js"></script>*@
+
+@*<script src="~/plugins/Jquery-form/jquery.form.js"></script>*@
+@*
+<script src="~/plugins/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>*@
+
+
+
+@*<partial name="_ValidationScriptsPartial"></partial>*@
+@*<partial name="_DialogScriptsPartial"></partial>*@
+
+
+<script type="text/javascript">
+
+    var success = (data) => {
+
+        if (data.resultCode == 0) {
+
+            $('#Custom-myModal').modal('hide');
+            showDialog("", data.resultDescription, "success", data.controller, data.action, data.id, true, false, null, 0);
+        }
+        else {
+            showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
+        }
+    }
+
+    var fail = data => {
+        showDialog('SomethingWentWrong', data.resultDescription, "error", "", "", 0, false, false, null, 0);
+    }
+</script>

@@ -27,8 +27,8 @@ namespace POS.UI.MVC.Controllers
             if (VerifyResponse(response, out responseMessage))
             {
                 var requestResult = await response.Content.ReadAsStringAsync();
-                departmentmodellist = (DepartmentModelList)JsonConvert.DeserializeObject<DepartmentModelList>(requestResult);
-
+                departmentmodellist = (DepartmentModelList)JsonConvert.DeserializeObject<DepartmentModelList>(requestResult);               
+                ViewData["Controller"] = "Departments";
                 TimeSpan ts = DateTime.Now.Subtract(t1);
                 _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
                 return View("Index", departmentmodellist);
@@ -67,6 +67,9 @@ namespace POS.UI.MVC.Controllers
                 {
                     var requestResult = await response.Content.ReadAsStringAsync();
                     model = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
+                    model.Controller = "Departments";
+                    model.Action = "Index";
+                    model.ID= model.Department_ID;
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));                          
                     return await Task.FromResult<ActionResult>(Json(model));
@@ -114,12 +117,12 @@ namespace POS.UI.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateDepartmentAsync(DepartmentModel DepartmentModel)
+        public async Task<ActionResult> UpdateDepartmentAsync(DepartmentModel model)
         {
-            if (ModelState.IsValid && DepartmentModel != null)
+            if (ModelState.IsValid && model != null)
             {
                 DateTime t1 = DateTime.Now;
-                var jsonData = JsonConvert.SerializeObject(DepartmentModel, Formatting.Indented, new JsonSerializerSettings()
+                var jsonData = JsonConvert.SerializeObject(model, Formatting.Indented, new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
@@ -130,11 +133,14 @@ namespace POS.UI.MVC.Controllers
                 if (VerifyResponse(response, out responseMessage))
                 {
                     var requestResult = await response.Content.ReadAsStringAsync();
-                    DepartmentModel = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
+                    model = JsonConvert.DeserializeObject<DepartmentModel>(requestResult);
+                    model.Controller = "Departments";
+                    model.Action = "Index";
+                    model.ID = model.Department_ID;
                     TimeSpan ts = DateTime.Now.Subtract(t1);
                     _logger.TraceLog(String.Format("[{0:D2}:{1:D2}:{2:D3}]>>LoadTime. ", ts.Minutes, ts.Seconds, ts.Milliseconds));
                     
-                    return await Task.FromResult<ActionResult>(Json(DepartmentModel));
+                    return await Task.FromResult<ActionResult>(Json(model));
                 }
                 else
                 {

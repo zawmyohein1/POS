@@ -22,16 +22,13 @@ namespace POS.Application.Services
 {
     public class Userservice : IUserservice
     {
-        private IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private ILoggerHelper _logger;
         private readonly AppSettings _appSettings;
         private readonly IMapper _mapper;
-
-        private IDbContextTransaction _transaction;
         public Userservice(IUnitOfWork unitOfWork, ILoggerHelper logger, IOptions<AppSettings> appSettings, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _transaction = _unitOfWork.BeginTransaction();
             _logger = logger;
             _appSettings = appSettings.Value;
             _mapper = mapper;
@@ -83,12 +80,14 @@ namespace POS.Application.Services
                 {
                     try
                     {
+                        _unitOfWork.StartTransaction();
+
                         var duplicateEntity = await _unitOfWork.User.FindAsync(x => x.Email == model.Email && x.User_ID != model.User_ID && x.IsDeleted == false);
                         if (duplicateEntity == null)
                         {
                             entity = await _unitOfWork.User.AddAsyn(entity);
-                            _unitOfWork.SaveChangesAsync().Wait();
-                            _transaction.Commit();
+                            _unitOfWork.SaveChanges();
+                            _unitOfWork.Commit();
 
                             model.User_ID = entity.User_ID;
                             model.ResultCode = (int)CustomExceptionEnum.Success;
@@ -104,14 +103,14 @@ namespace POS.Application.Services
                     }
                     catch (CustomException ex)
                     {
-                        _transaction.Rollback();
+                        _unitOfWork.Rollback();
                         model.ResultCode = (int)ex.ResultCode;
                         model.ResultDescription = ex.ResultDescription;
                         _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
                     }
                     catch (Exception ex)
                     {
-                        _transaction.Rollback();
+                        _unitOfWork.Rollback();
                         model.ResultCode = (int)CustomExceptionEnum.UnknownException;
                         model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
                         _logger.LogError(ex);
@@ -141,6 +140,7 @@ namespace POS.Application.Services
 
             try
             {
+                _unitOfWork.StartTransaction();
                 var entity = await _unitOfWork.User.GetAsync(Id);
                 if (entity != null)
                 {
@@ -175,6 +175,7 @@ namespace POS.Application.Services
             {
                 try
                 {
+                    _unitOfWork.StartTransaction();
                     var entity = await _unitOfWork.User.GetAsync(model.User_ID);
                     if (entity != null)
                     {
@@ -185,7 +186,7 @@ namespace POS.Application.Services
 
                             entity = _mapper.Map<User>(model);
                             await _unitOfWork.User.UpdateAsyn(entity, entity.User_ID);
-                            _transaction.Commit();
+                            _unitOfWork.Commit();
 
                             model.ResultCode = (int)CustomExceptionEnum.Success;
                             model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
@@ -204,7 +205,7 @@ namespace POS.Application.Services
                 }
                 catch (CustomException ex)
                 {
-                    _transaction.Rollback();
+                    _unitOfWork.Rollback();
                     model.ResultCode = (int)ex.ResultCode;
                     model.ResultDescription = ex.ResultDescription;
                     _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
@@ -212,7 +213,7 @@ namespace POS.Application.Services
                 }
                 catch (Exception ex)
                 {
-                    _transaction.Rollback();
+                    _unitOfWork.Rollback();
                     model.ResultCode = (int)CustomExceptionEnum.UnknownException;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
                     _logger.LogError(ex);
@@ -234,13 +235,14 @@ namespace POS.Application.Services
             {
                 try
                 {
+                    _unitOfWork.StartTransaction();
                     var entity = await _unitOfWork.User.GetAsync(Id);
                     if (entity != null)
                     {
                         entity.IsDeleted = true;
                         _unitOfWork.User.UpdateAsyn(entity, entity.User_ID).Wait();
 
-                        _transaction.Commit();
+                        _unitOfWork.Commit();
 
                         model.ResultCode = (int)CustomExceptionEnum.Success;
                         model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
@@ -254,7 +256,7 @@ namespace POS.Application.Services
                 }
                 catch (CustomException ex)
                 {
-                    _transaction.Rollback();
+                    _unitOfWork.Rollback();
 
                     model.ResultCode = (int)ex.ResultCode;
                     model.ResultDescription = ex.ResultDescription;
@@ -262,7 +264,7 @@ namespace POS.Application.Services
                 }
                 catch (Exception ex)
                 {
-                    _transaction.Rollback();
+                    _unitOfWork.Rollback();
 
                     model.ResultCode = (int)CustomExceptionEnum.UnknownException;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
@@ -284,6 +286,7 @@ namespace POS.Application.Services
             {
                 try
                 {
+                    _unitOfWork.StartTransaction();
                     var entity = await _unitOfWork.User.FindByAsyn(x => x.Email == model.Email && x.Password == model.Password);
                     if (entity != null)
                     {

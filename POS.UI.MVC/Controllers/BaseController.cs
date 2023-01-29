@@ -29,7 +29,7 @@ namespace POS.UI.MVC.Controllers
 
         protected bool VerifyResponse(HttpResponseMessage response, out string errorMessage)
         {
-            bool isSuccess = false;        
+            bool isSuccess = false;
 
             switch (response.StatusCode)
             {
@@ -124,7 +124,7 @@ namespace POS.UI.MVC.Controllers
                 if (valid)
                     await next();
                 else
-                    context.Result = new BadRequestObjectResult("Invalid!");
+                    context.Result = new RedirectToActionResult("Login", "Users", null);
             }
         }
 
@@ -136,5 +136,5 @@ namespace POS.UI.MVC.Controllers
             else
                 return false;
         }
-    }   
+    }
 }
