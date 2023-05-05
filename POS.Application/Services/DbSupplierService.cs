@@ -20,13 +20,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace POS.Application.Services
 {
-    public class Userservice : IUserservice
+    public class DbSupplierService : IDbSupplierservice
     {
         private readonly IUnitOfWork _unitOfWork;
         private ILoggerHelper _logger;
         private readonly AppSettings _appSettings;
         private readonly IMapper _mapper;
-        public Userservice(IUnitOfWork unitOfWork, ILoggerHelper logger, IOptions<AppSettings> appSettings, IMapper mapper)
+        public DbSupplierService(IUnitOfWork unitOfWork, ILoggerHelper logger, IOptions<AppSettings> appSettings, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -34,18 +34,18 @@ namespace POS.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<UserModelList> GetAllUsers()
+        public async Task<DbSupplierModelList> GetAllDbSuppliers()
         {
-            UserModelList modelList = new UserModelList();
+            DbSupplierModelList modelList = new DbSupplierModelList();
 
             try
             {            
-                var entities = await _unitOfWork.User.FindAllAsync(x => x.IsDeleted == false);
+                var entities = await _unitOfWork.DbSupplier.FindAllAsync(x => x.IsDeleted == false);
                 if (entities != null)
                 {
-                    modelList.userModelList = entities.Select<User, UserModel>((UserEntity =>
+                    modelList.supplierModelList = entities.Select<DbSupplier, DbSupplierModel>((SupplierEntity =>
                     {
-                        return _mapper.Map<UserModel>(UserEntity);
+                        return _mapper.Map<DbSupplierModel>(SupplierEntity);
                     })).ToList();
 
                     modelList.ResultCode = (int)CustomExceptionEnum.Success;
@@ -53,7 +53,7 @@ namespace POS.Application.Services
                 }
                 else
                 {
-                    throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                    throw new CustomException(CustomExceptionEnum.NoSupplierInfoAvailiable);
                 }
             }
             catch (CustomException ex)
@@ -71,34 +71,34 @@ namespace POS.Application.Services
             return modelList;
         }
 
-        public async Task<UserModel> CreateUser(UserModel model)
+        public async Task<DbSupplierModel> CreateDbSupplier(DbSupplierModel model)
         {
             try
             {
-                var entity = _mapper.Map<User>(model);
+                var entity = _mapper.Map<DbSupplier>(model);
                 try
                 {
                     try
                     {
                         //_unitOfWork.StartTransaction();
 
-                        var duplicateEntity = await _unitOfWork.User.FindAsync(x => x.Email == model.Email && x.User_ID != model.User_ID && x.IsDeleted == false);
+                        var duplicateEntity = await _unitOfWork.DbSupplier.FindAsync(x => x.Email == model.Email && x.Supplier_ID != model.Supplier_ID && x.IsDeleted == false);
                         if (duplicateEntity == null)
                         {
-                            entity = await _unitOfWork.User.AddAsyn(entity);
+                            entity = await _unitOfWork.DbSupplier.AddAsyn(entity);
                             _unitOfWork.SaveChanges();
                             _unitOfWork.Commit();
 
-                            model.User_ID = entity.User_ID;
+                            model.Supplier_ID = entity.Supplier_ID;
                             model.ResultCode = (int)CustomExceptionEnum.Success;
                             model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
 
-                            //insert recrod to audit trail table after insert user record
-                            //AuditTrail.InsertAuditTrail(AuditAction.Add, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                            //insert recrod to audit trail table after insert supplier record
+                            //AuditTrail.InsertAuditTrail(AuditAction.Add, AuditModule.Supplier, AuditTrail.GetEntityInfo(entity), model.AuditSupplierName);
                         }
                         else
                         {
-                            throw new CustomException(CustomExceptionEnum.UserEmailAlreadyExists);
+                            throw new CustomException(CustomExceptionEnum.SupplierEmailAlreadyExist);
                         }
                     }
                     catch (CustomException ex)
@@ -134,23 +134,23 @@ namespace POS.Application.Services
             return model;
         }
 
-        public async Task<UserModel> GetUserById(int Id)
+        public async Task<DbSupplierModel> GetDbSupplierById(int Id)
         {
-            var model = new UserModel();
+            var model = new DbSupplierModel();
 
             try
             {
                 _unitOfWork.StartTransaction();
-                var entity = await _unitOfWork.User.GetAsync(Id);
+                var entity = await _unitOfWork.DbSupplier.GetAsync(Id);
                 if (entity != null)
                 {
-                    model = _mapper.Map<UserModel>(entity);
+                    model = _mapper.Map<DbSupplierModel>(entity);
                     model.ResultCode = (int)CustomExceptionEnum.Success;
                     model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
                 }
                 else
                 {
-                    throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                    throw new CustomException(CustomExceptionEnum.NoSupplierInfoAvailiable);
                 }
             }
             catch (CustomException ex)
@@ -169,38 +169,38 @@ namespace POS.Application.Services
             return model;
         }
 
-        public async Task<UserModel> UpdateUser(UserModel model)
+        public async Task<DbSupplierModel> UpdateDbSupplier(DbSupplierModel model)
         {
             try
             {
                 try
                 {
                     _unitOfWork.StartTransaction();
-                    var entity = await _unitOfWork.User.GetAsync(model.User_ID);
+                    var entity = await _unitOfWork.DbSupplier.GetAsync(model.Supplier_ID);
                     if (entity != null)
                     {
-                        var duplicateEntity = await _unitOfWork.User.FindAsync(x => x.Email == model.Email && x.User_ID != model.User_ID && x.IsDeleted == false);
+                        var duplicateEntity = await _unitOfWork.DbSupplier.FindAsync(x => x.Email == model.Email && x.Supplier_ID != model.Supplier_ID && x.IsDeleted == false);
                         if (duplicateEntity == null)
                         {
-                            //AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                            //AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.Supplier, AuditTrail.GetEntityInfo(entity), model.AuditSupplierName);
 
-                            entity = _mapper.Map<User>(model);
-                            await _unitOfWork.User.UpdateAsyn(entity, entity.User_ID);
+                            entity = _mapper.Map<DbSupplier>(model);
+                            await _unitOfWork.DbSupplier.UpdateAsyn(entity, entity.Supplier_ID);
                             _unitOfWork.Commit();
 
                             model.ResultCode = (int)CustomExceptionEnum.Success;
                             model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
 
-                            //AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                            //AuditTrail.InsertAuditTrail(AuditAction.EditBefore, AuditModule.Supplier, AuditTrail.GetEntityInfo(entity), model.AuditSupplierName);
                         }
                         else
                         {
-                            throw new CustomException(CustomExceptionEnum.UserEmailAlreadyExists);
+                            throw new CustomException(CustomExceptionEnum.SupplierEmailAlreadyExist);
                         }
                     }
                     else
                     {
-                        throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                        throw new CustomException(CustomExceptionEnum.NoSupplierInfoAvailiable);
                     }
                 }
                 catch (CustomException ex)
@@ -228,30 +228,30 @@ namespace POS.Application.Services
             return model;
         }
 
-        public async Task<UserModel> DeleteUser(int Id, string userName)
+        public async Task<DbSupplierModel> DeleteDbSupplier(int Id, string supplierName)
         {
-            var model = new UserModel();
+            var model = new DbSupplierModel();
             try
             {
                 try
                 {
                     _unitOfWork.StartTransaction();
-                    var entity = await _unitOfWork.User.GetAsync(Id);
+                    var entity = await _unitOfWork.DbSupplier.GetAsync(Id);
                     if (entity != null)
                     {
                         entity.IsDeleted = true;
-                        _unitOfWork.User.UpdateAsyn(entity, entity.User_ID).Wait();
+                        _unitOfWork.DbSupplier.UpdateAsyn(entity, entity.Supplier_ID).Wait();
 
                         _unitOfWork.Commit();
 
                         model.ResultCode = (int)CustomExceptionEnum.Success;
                         model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
 
-                        //AuditTrail.InsertAuditTrail(AuditAction.Delete, AuditModule.User, AuditTrail.GetEntityInfo(entity), model.AuditUserName);
+                        //AuditTrail.InsertAuditTrail(AuditAction.Delete, AuditModule.Supplier, AuditTrail.GetEntityInfo(entity), model.AuditSupplierName);
                     }
                     else
                     {
-                        throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
+                        throw new CustomException(CustomExceptionEnum.NoSupplierInfoAvailiable);
                     }
                 }
                 catch (CustomException ex)
@@ -278,61 +278,6 @@ namespace POS.Application.Services
                 _logger.LogError(ex);
             }
             return model;
-        }
-
-        public async Task<UserModel> LoginUser(UserModel model)
-        {
-            try
-            {
-                try
-                {
-                    _unitOfWork.StartTransaction();
-                    var entity = await _unitOfWork.User.FindByAsyn(x => x.Email == model.Email && x.Password == model.Password);
-                    if (entity != null)
-                    {
-                        // authentication successful so generate jwt token
-                        var tokenHandler = new JwtSecurityTokenHandler();
-                        var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-                        var tokenDescriptor = new SecurityTokenDescriptor
-                        {
-                            Subject = new ClaimsIdentity(new[] { new Claim("id", model.User_ID.ToString()) }),
-                            Expires = DateTime.UtcNow.AddDays(7), //update later with configurable setting
-                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                        };
-
-                        var token = tokenHandler.CreateToken(tokenDescriptor);
-
-                        model.Token = tokenHandler.WriteToken(token);
-                        model.ResultCode = (int)CustomExceptionEnum.Success;
-                        model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.Success);
-
-                    }
-                    else
-                    {
-                        throw new CustomException(CustomExceptionEnum.NoUserInfoAvailiable);
-                    }
-                }
-                catch (CustomException ex)
-                {
-                    model.ResultCode = (int)ex.ResultCode;
-                    model.ResultDescription = ex.ResultDescription;
-                    _logger.TraceLog(String.Format("Error Code : {0} ,Description : {1}", ex.ResultCode, ex.ResultDescription));
-                }
-                catch (Exception ex)
-                {
-                    model.ResultCode = (int)CustomExceptionEnum.UnknownException;
-                    model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
-                    _logger.LogError(ex);
-                }
-            }
-            catch (Exception ex)
-            {
-                model.ResultCode = (int)CustomExceptionEnum.UnknownException;
-                model.ResultDescription = CustomException.GetMessage(CustomExceptionEnum.UnknownException);
-                _logger.LogError(ex);
-            }
-
-            return model.WithoutPassword();
-        }
+        }       
     }
 }

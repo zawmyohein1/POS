@@ -1,0 +1,127 @@
+@model POS.Domain.ViewModels.DbSupplierModelList
+
+@{
+    ViewBag.Title = "Listing Suppliers";
+    Layout = null;
+}
+
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Manage DbSupplier</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <button type="button" id="btnAddNew" class=" btn btn-block btn-primary  float-sm-right btnAddNew">Add</button>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-striped projects customTbl scrollWrapTbl listingTbl">
+                            @*<table class=" table table-bordered table-striped customTbl listingTbl">*@
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>CountryCode</th>
+                                    <th>DateCreated</th>                                
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.supplierModelList)
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.Supplier_ID)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Supplier_Name)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.CountryCode)</td>
+                                        <td>   @item.DateCreated.ToString("dd/MM/yyyy")</td>                                       
+                                        <td><a href="#" class="lnkEdit" data-para="@item.Supplier_ID"><i class="fa fa-fw fa-edit"></i></a> | <a href="#" class="lnkDelete" data-para="@item.Supplier_ID"><i class="fa fa-fw fa-trash"></i></a></td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+
+
+<!-- Modal -->
+<div id="ppcreate">
+</div>
+
+<div id="ppcreate"></div>
+<script src="~/plugins/jquery-unobtrusive-ajax/jquery.unobtrusive-ajax.min.js"></script>
+
+<partial name="_ActionScriptsPartial" view-data="@ViewData"></partial>
+
+
+@*<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#btnAddNew').click(function () {
+            var relativeURI = '@Url.Action("Create","DbSuppliers")';
+            renderPPPartialView(relativeURI);
+        });
+
+        $('.customTbl').on('click', '.lnkEdit', function () {
+            var _id = $(this).attr('data-para');
+            if (_id > 0) {
+                var relativeURI = "";
+                var relativeURI = '@Url.Action("Update", "DbSuppliers")?id=' + _id;
+                renderPPPartialView(relativeURI);
+            }
+        });
+        $('.customTbl').on('click', '.lnkDelete', function () {
+
+            var tdCount = $('tbody tr').length;
+            if (tdCount > 1) {
+                var _id = $(this).attr('data-para');
+                deleteDialog("DbSuppliers", "Delete", ["id"], [_id], "DbSuppliers", 0, 'Index');
+            }
+            else {
+                showDialog('Cannot delete this record!', "error", "", "", 0, false, false);
+                showDialog('Cannot Delete This Record', 'AtLeast One Record Must Be Remained', "error", "", "", 0, false, false);
+            }
+        });
+    });
+
+    //script with partial render
+    function renderPPPartialView(relativeURI) {
+        $.ajax({
+            url: relativeURI,
+            type: "Get",
+            cache: false,
+            success: function (data) {
+                $("#ppcreate").html("");
+                $("#ppcreate").html(data);
+                //custom showing popup
+                $('#Custom-myModal').modal('show');
+            }
+        });
+    }
+
+</script>*@
+
+

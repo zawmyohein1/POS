@@ -42,6 +42,7 @@ namespace POS.Infrastructure.IoC
         {
             _service.AddScoped<IUserservice, Userservice>();
             _service.AddScoped<IDepartmentservice, DepartmentService>();
+            _service.AddScoped<IDbSupplierservice, DbSupplierService>();
 
             return services;
         }

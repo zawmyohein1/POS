@@ -20,6 +20,10 @@ namespace POS.Infrastructure.Exceptions
         InvalidOccupationName,
         InvalidDepartmentID,
         NoOccupationInfoAvailiable,
+        NoSupplierInfoAvailiable,
+        InvalidSupplierName,
+        SupplierNameAlreadyExist,
+        SupplierEmailAlreadyExist,
     }
     public enum EntityTypes
     {

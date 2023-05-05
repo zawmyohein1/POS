@@ -9,6 +9,7 @@ namespace POS.Infrastructure.Data.UnitOfWork
     {     
         IUserRepository User { get; }
         IDepartmentRepository Department { get; }
+        IDBSupplierrRepository DbSupplier { get; }
         public void StartTransaction();
         public void Commit();
         public void Rollback();

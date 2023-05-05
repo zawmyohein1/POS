@@ -12,6 +12,7 @@ namespace POS.Infrastructure.Data.UnitOfWork
 
         private IDepartmentRepository _department;
         private IUserRepository _user;
+        private IDBSupplierrRepository _dbsupplier;
         private IDbContextTransaction _transaction;
 
         public UnitOfWork(POSDbContext context)
@@ -38,6 +39,17 @@ namespace POS.Infrastructure.Data.UnitOfWork
                     _user = new UserRepository(_context);
                 }
                 return _user;
+            }
+        }
+        public IDBSupplierrRepository DbSupplier
+        {
+            get
+            {
+                if (_dbsupplier == null)
+                {
+                    _dbsupplier = new DbSupplierReposity(_context);
+                }
+                return _dbsupplier;
             }
         }
         public void StartTransaction()

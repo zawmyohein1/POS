@@ -12,8 +12,8 @@ namespace POS.Infrastructure.Data.Context
         public DbSet<Audit_Trail> Audit_Trails { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Department> Departments { get; set; }
-
         public DbSet<Occupation> Occupations { get; set; }
+        public DbSet<DbSupplier> DbSuppliers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

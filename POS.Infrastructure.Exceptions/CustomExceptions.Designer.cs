@@ -19,7 +19,7 @@ namespace POS.Infrastructure.Exceptions {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class CustomExceptions {
@@ -97,11 +97,29 @@ namespace POS.Infrastructure.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid Supplier Name.
+        /// </summary>
+        internal static string InvalidSupplierName {
+            get {
+                return ResourceManager.GetString("InvalidSupplierName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Department Info Availiable.
         /// </summary>
         internal static string NoDepartmentInfoAvailiable {
             get {
                 return ResourceManager.GetString("NoDepartmentInfoAvailiable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Supplier Info Availiable.
+        /// </summary>
+        internal static string NoSupplierInfoAvailiable {
+            get {
+                return ResourceManager.GetString("NoSupplierInfoAvailiable", resourceCulture);
             }
         }
         
@@ -120,6 +138,15 @@ namespace POS.Infrastructure.Exceptions {
         internal static string Success {
             get {
                 return ResourceManager.GetString("Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supplier Name Already Exists.
+        /// </summary>
+        internal static string SupplierNameAlreadyExist {
+            get {
+                return ResourceManager.GetString("SupplierNameAlreadyExist", resourceCulture);
             }
         }
         

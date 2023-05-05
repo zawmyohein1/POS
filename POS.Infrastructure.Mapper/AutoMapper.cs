@@ -10,6 +10,7 @@ namespace POS.Infrastructure.Mapper
         {
             CreateMap<User, UserModel>().ReverseMap();
             CreateMap<Department, DepartmentModel>().ReverseMap();
+            CreateMap<DbSupplier, DbSupplierModel>().ReverseMap();
         }
     }
 }

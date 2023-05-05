@@ -232,6 +232,7 @@
     <Content Remove="appsettings.Development.json" />
     <Content Remove="appsettings.json" />
     <Content Remove="appsettings.Production.json" />
+    <Content Remove="Views\DbSuppliers\Index.cshtml" />
     <Content Remove="wwwroot\css\main.css" />
     <Content Remove="wwwroot\index.html" />
   </ItemGroup>
@@ -241,6 +242,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Views\DbSuppliers\Index.cshtml" />
     <None Include="Views\Users\Index.cshtml" />
     <None Include="wwwroot\plugins\jquery-unobtrusive-ajax\jquery.unobtrusive-ajax.min.js" />
     <None Include="wwwroot\plugins\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />

@@ -144,4 +144,13 @@
   <data name="NoDepartmentInfoAvailiable" xml:space="preserve">
     <value>No Department Info Availiable</value>
   </data>
+  <data name="InvalidSupplierName" xml:space="preserve">
+    <value>Invalid Supplier Name</value>
+  </data>
+  <data name="NoSupplierInfoAvailiable" xml:space="preserve">
+    <value>No Supplier Info Availiable</value>
+  </data>
+  <data name="SupplierNameAlreadyExist" xml:space="preserve">
+    <value>Supplier Name Already Exists</value>
+  </data>
 </root>
